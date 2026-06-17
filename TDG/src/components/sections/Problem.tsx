@@ -1,0 +1,54 @@
+import { PROBLEM_CONTENT } from "../../data/content";
+import ScrollReveal from "../ui/ScrollReveal";
+import StatCard from "../ui/StatCard";
+
+const Problem = () => {
+  return (
+    <section id="problem" className="bg-parchment py-24 px-6 relative overflow-hidden">
+      {/* Decorative earthy organic texture using background gradient accents */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-sage/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[30rem] h-[30rem] bg-ochre/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          {/* Left Column: Context Text */}
+          <div className="lg:col-span-7 flex flex-col gap-6">
+            <ScrollReveal direction="up" delay={0.1}>
+              <span className="font-sans text-xs md:text-sm font-bold tracking-[0.25em] text-sage uppercase">
+                {PROBLEM_CONTENT.eyebrow}
+              </span>
+            </ScrollReveal>
+
+            <ScrollReveal direction="up" delay={0.2}>
+              <h2 className="font-display text-4xl md:text-5xl font-bold text-soil leading-tight">
+                The Crisis Facing Kenya's Drylands
+              </h2>
+            </ScrollReveal>
+
+            <ScrollReveal direction="up" delay={0.3} className="flex flex-col gap-4 text-soil/80">
+              {PROBLEM_CONTENT.paragraphs.map((p, i) => (
+                <p key={i} className="text-base md:text-lg leading-relaxed">
+                  {p}
+                </p>
+              ))}
+            </ScrollReveal>
+          </div>
+
+          {/* Right Column: Stacked Stat Cards */}
+          <div className="lg:col-span-5 flex flex-col gap-6">
+            {PROBLEM_CONTENT.stats.map((stat, i) => (
+              <StatCard
+                key={i}
+                number={stat.number}
+                label={stat.label}
+                delay={0.1 * (i + 1)}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Problem;

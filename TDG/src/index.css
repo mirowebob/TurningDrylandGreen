@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --color-soil: #1A1208;
+  --color-forest: #2D4A1E;
+  --color-sage: #8BAF5A;
+  --color-ochre: #C4955A;
+  --color-parchment: #F5F0E8;
+
+  --font-display: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-sans text-soil antialiased;
+    font-size: 18px;
+    line-height: 1.65;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+}
