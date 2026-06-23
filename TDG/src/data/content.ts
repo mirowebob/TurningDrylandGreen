@@ -156,7 +156,8 @@ export const GOALS_CONTENT = {
       outcomes: [
         "Local communities fully trained in modern dryland forest management",
         "Establishment of functional governance for catchment user groups",
-        "Equitable sharing of resources and management duties"
+        "Equitable sharing of resources and management duties",
+        "Empower displaced and returnee communities to own, lead and sustain rangeland restoration activities."
       ]
     },
     {
@@ -165,14 +166,17 @@ export const GOALS_CONTENT = {
       outcomes: [
         "Dilapidated and eroded waterways restored to natural flows",
         "Soil stabilization through deliberate vegetation on embankments",
-        "Mitigation of destructive flash floods downstream"
+        "Mitigation of destructive flash floods downstream",
+        "Re-establish physical and social connectivity in areas fragmented by hydrological damage",
+        "Conduct gully healing interventions to mitigate negative impacts on subsurface water levels",
+        "Control land degradation through erosion prevention and soil stabilization"
       ]
     },
     {
       number: "03",
       title: "Water Availability",
       outcomes: [
-        "2 target catchments fully equipped with sustainable water infrastructure",
+        "Targeting catchments in dry lands fully equipped with sustainable water",
         "Excavated water pans, cut-off drains, and shallow wells operational",
         "Reduced trek times for community water collection"
       ]
