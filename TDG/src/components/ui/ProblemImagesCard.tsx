@@ -1,5 +1,12 @@
 // src/components/ui/ProblemImageCard.jsx
-const ProblemImageCard = ({ src, alt, tag, caption }) => {
+interface ProblemImagesCardProps {
+  src: string;
+  alt: string;
+  tag: string;
+  caption: string;
+}
+
+const ProblemImageCard = ({ src, alt, tag, caption }: ProblemImagesCardProps) => {
   return (
     <article className="relative flex-none w-72 sm:w-80 cursor-pointer rounded-sm overflow-hidden
       bg-parchment border border-soil/10 group focus-visible:outline-2

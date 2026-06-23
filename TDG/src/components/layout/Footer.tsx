@@ -1,5 +1,5 @@
 import React from "react";
-import { NAVBAR_CONTENT, ABOUT_CONTENT } from "../../data/content";
+import { NAVBAR_CONTENT } from "../../data/content";
 import tdgLogo from "../../assets/tdg_logo.png";
 
 const Footer = () => {
