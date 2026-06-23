@@ -3,7 +3,7 @@ import ScrollReveal from "../ui/ScrollReveal";
 import StatCard from "../ui/StatCard";
 import ProblemImagesCard from "../ui/ProblemImagesCard";
 import figure1 from "../../assets/Figure 1- Eroded Stream in Southern Kajiado.jpg";
-import figure2 from "../../assets/Figure 2-Extent of Gulley Erosion in Suswa Narok.jpg";
+import figure2 from "../../assets/suswa erosion.jpg";
 import figure4 from "../../assets/Fig. 4-httpsafrica.wetlands.orgennewsusing-geo-data-to-improve-water-resource-management-in-kajiado-county.png";
 import figure5 from "../../assets/Figure 5-dry Ewaso Ng'iro River-bed in Isiolo.jpg";
 import figure6 from "../../assets/Figure 6-Tot in Elgeyo Marakwet.png";
