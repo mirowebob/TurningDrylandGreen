@@ -1,5 +1,6 @@
 import React from "react";
 import { NAVBAR_CONTENT, ABOUT_CONTENT } from "../../data/content";
+import tdgLogo from "../../assets/tdg_logo.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -27,9 +28,11 @@ const Footer = () => {
             className="flex items-center gap-3 group focus:outline-none w-fit"
             aria-label="Turning Drylands Green Home"
           >
-            <span className="font-display font-bold text-2xl text-sage bg-forest/30 border border-sage/20 rounded px-2.5 py-1 tracking-wider">
-              {NAVBAR_CONTENT.logo.monogram}
-            </span>
+            <img
+              src={tdgLogo}
+              alt="TDG logo"
+              className="h-11 w-11 rounded-full object-cover border border-sage/20 bg-white/5"
+            />
             <span className="font-display text-lg text-white font-medium tracking-wide">
               {NAVBAR_CONTENT.logo.fullName}
             </span>

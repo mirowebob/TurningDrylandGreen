@@ -8,6 +8,7 @@ import {
   Sprout,
   Globe,
   Wrench,
+  Laptop,
   Map as MapIcon,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -22,6 +23,7 @@ const iconMap: Record<string, LucideIcon> = {
   Globe: Globe,
   Wrench: Wrench,
   Map: MapIcon,
+  DeviceLaptop: Laptop,
 };
 
 const About = () => {

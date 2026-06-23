@@ -1,15 +1,13 @@
 import './style.css'
-import typescriptLogo from './assets/typescript.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import tdgLogo from './assets/tdg_logo.png'
 import { setupCounter } from './counter.ts'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 <section id="center">
   <div class="hero">
-    <img src="${heroImg}" class="base" width="170" height="179">
-    <img src="${typescriptLogo}" class="framework" alt="TypeScript logo"/>
-    <img src="${viteLogo}" class="vite" alt="Vite logo" />
+    <img src="${tdgLogo}" class="base" width="170" height="179" alt="TDG logo">
+    <img src="${tdgLogo}" class="framework" alt="TDG logo"/>
+    <img src="${tdgLogo}" class="vite" alt="TDG logo" />
   </div>
   <div>
     <h1>Get started</h1>

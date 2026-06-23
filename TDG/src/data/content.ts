@@ -33,6 +33,7 @@ export interface OutcomeData {
 
 export interface CollaboratorData {
   name: string;
+  logo?: string;
 }
 
 export const NAVBAR_CONTENT = {
@@ -91,6 +92,7 @@ export const ABOUT_CONTENT = {
     { role: "Environmentalist (Climate Change)", iconName: "Globe" },
     { role: "Construction Engineer", iconName: "Wrench" },
     { role: "Cartographer", iconName: "Map" },
+    {role: "IT Specialist", iconName: "DeviceLaptop" }
   ] as TeamMemberData[],
 };
 
@@ -228,19 +230,19 @@ export const COLLABORATORS_CONTENT = {
   title: "Potential Collaborators",
   subtitle: "We are actively seeking partnerships with:",
   list: [
-    { name: "Government of Kenya (Treasury, Environment, ASALs, Agriculture, Livestock, Water)" },
-    { name: "Council of Governors" },
-    { name: "IUCN" },
-    { name: "Japanese Embassy" },
-    { name: "UN-Habitat · UNDP · UNEP · FAO" },
-    { name: "Conservation International" },
-    { name: "OXFAM GB" },
-    { name: "Peace Parks Foundation" },
-    { name: "African Forest Landscape Restoration Initiative" },
-    { name: "World Resources International (WRI)" },
+    { name: "Government of Kenya (Treasury, Environment, ASALs, Agriculture, Livestock, Water)", logo: "kenya logo.png" },
+    { name: "Council of Governors", logo: "council of governors.png" },
+    { name: "IUCN", logo: "iunc logo.jpg" },
+    { name: "Japanese Embassy", logo: "japan nairobi embassy logo.png" },
+    { name: "UN-Habitat · UNDP · UNEP · FAO", logo: "un habitat logo.png" },
+    { name: "Conservation International", logo: "conservation international.jpg" },
+    { name: "OXFAM GB", logo: "oxfarm logo.jpg" },
+    { name: "Peace Parks Foundation", logo: "Peace Parks Foundation logo.png" },
+    { name: "African Forest Landscape Restoration Initiative", logo: "African Forest Landscape Restoration Initiative_logo.png" },
+    { name: "World Resources International (WRI)", logo: "worldresourceinstitute.png" },
     { name: "Imara Integrated Farmers' Solutions" },
-    { name: "Safaricom" },
-    {name: "Green Belt Movement"}
+    { name: "Safaricom", logo: "safaricomlogo.jpg" },
+    { name: "Green Belt Movement", logo: "greenbeltmovement.jpg" }
   ] as CollaboratorData[],
 };
 

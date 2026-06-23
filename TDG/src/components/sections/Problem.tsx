@@ -1,6 +1,38 @@
 import { PROBLEM_CONTENT } from "../../data/content";
 import ScrollReveal from "../ui/ScrollReveal";
 import StatCard from "../ui/StatCard";
+import ProblemImagesCard from "../ui/ProblemImagesCard";
+import figure1 from "../../assets/Figure 1- Eroded Stream in Southern Kajiado.jpg";
+import figure2 from "../../assets/Figure 2-Extent of Gulley Erosion in Suswa Narok.JPG";
+import figure5 from "../../assets/Figure 5-dry Ewaso Ng'iro River-bed in Isiolo.jpg";
+import figure6 from "../../assets/Figure 6-Tot in Elgeyo Marakwet.png";
+
+const PROBLEM_IMAGES = [
+  {
+    src: figure1,
+    alt: "Eroded stream in southern Kajiado",
+    tag: "Erosion",
+    caption: "Stream erosion in southern Kajiado is stripping fertile topsoil.",
+  },
+  {
+    src: figure2,
+    alt: "Gully erosion in Suswa Narok",
+    tag: "Gully Erosion",
+    caption: "Severe gulley erosion in Suswa Narok threatens grazing land.",
+  },
+  {
+    src: figure5,
+    alt: "Dry Ewaso Ng'iro river-bed in Isiolo",
+    tag: "River Loss",
+    caption: "The dry Ewaso Ng'iro river-bed shows how water scarcity impacts communities.",
+  },
+  {
+    src: figure6,
+    alt: "Tree planting in Elgeyo Marakwet",
+    tag: "Regeneration",
+    caption: "Early restoration work in Elgeyo Marakwet demonstrates green recovery potential.",
+  },
+];
 
 const Problem = () => {
   return (
@@ -45,6 +77,23 @@ const Problem = () => {
               />
             ))}
           </div>
+        </div>
+
+        {/* Image Cards Row */}
+        <div className="mt-14">
+          <ScrollReveal direction="up" delay={0.1}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center items-start">
+              {PROBLEM_IMAGES.map((image, i) => (
+                <ProblemImagesCard
+                  key={i}
+                  src={image.src}
+                  alt={image.alt}
+                  tag={image.tag}
+                  caption={image.caption}
+                />
+              ))}
+            </div>
+          </ScrollReveal>
         </div>
       </div>
     </section>

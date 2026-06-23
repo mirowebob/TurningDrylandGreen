@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { NAVBAR_CONTENT } from "../../data/content";
 import { useScrollPosition } from "../../hooks/useScrollPosition";
 import { Menu, X } from "lucide-react";
+import tdgLogo from "../../assets/tdg_logo.png";
 
 const Navbar = () => {
   const scrollPosition = useScrollPosition();
@@ -62,9 +63,11 @@ const Navbar = () => {
           className="flex items-center gap-3 group focus:outline-none"
           aria-label="Turning Drylands Green Home"
         >
-          <span className="font-display font-bold text-2xl text-sage bg-forest/30 border border-sage/20 rounded px-2.5 py-1 tracking-wider transition-all group-hover:bg-forest/50">
-            {NAVBAR_CONTENT.logo.monogram}
-          </span>
+          <img
+            src={tdgLogo}
+            alt="TDG logo"
+            className="h-11 w-11 rounded-full object-cover border border-sage/20 bg-white/5"
+          />
           <span className="font-display text-lg text-white font-medium tracking-wide hidden sm:inline-block transition-colors group-hover:text-sage">
             {NAVBAR_CONTENT.logo.fullName}
           </span>

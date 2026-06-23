@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { HERO_CONTENT } from "../../data/content";
+import tdgLogo from "../../assets/tdg_logo.png";
 
 const Hero = () => {
   const handleScrollTo = (id: string) => {
@@ -48,9 +49,16 @@ const Hero = () => {
           className="flex flex-col items-center gap-4"
         >
           {/* Logo badge / tiny label */}
-          <span className="font-sans text-xs md:text-sm font-semibold tracking-[0.25em] text-sage uppercase border border-sage/20 rounded-full px-4 py-1.5 bg-forest/10 backdrop-blur-sm">
-            Turning Drylands Green Foundation
-          </span>
+          <div className="flex items-center gap-3 bg-forest/10 border border-sage/20 rounded-full px-4 py-2 backdrop-blur-sm">
+            <img
+              src={tdgLogo}
+              alt="TDG logo"
+              className="h-10 w-10 rounded-full object-cover"
+            />
+            <span className="font-sans text-xs md:text-sm font-semibold tracking-[0.25em] text-sage uppercase">
+              Turning Drylands Green Foundation
+            </span>
+          </div>
         </motion.div>
 
         {/* Large Playfair Display headline */}
