@@ -64,10 +64,13 @@ const Contact = () => {
               <p className="font-sans text-base md:text-lg text-white/80 leading-relaxed">
                 {CONTACT_CONTENT.body}
               </p>
+              <p className="font-sans text-md font-semibold text-red-300 leading-relaxed">
+                  {CONTACT_CONTENT.prioritySites}
+                </p>
             </ScrollReveal>
 
             {/* Priority sites callout */}
-            <ScrollReveal direction="up" delay={0.4}>
+            {/*<ScrollReveal direction="up" delay={0.4}>
               <div className="bg-[#243c18]/40 border border-[#8BAF5A]/25 rounded-2xl p-6 shadow-inner flex flex-col gap-2">
                 <span className="font-sans text-xs font-bold text-ochre tracking-wider uppercase">
                   Priority Action Sites:
@@ -76,7 +79,7 @@ const Contact = () => {
                   {CONTACT_CONTENT.prioritySites}
                 </p>
               </div>
-            </ScrollReveal>
+            </ScrollReveal>*/}
 
             {/* Contact details list */}
             <div className="flex flex-col gap-5 mt-4">

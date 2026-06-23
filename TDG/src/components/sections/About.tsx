@@ -49,8 +49,6 @@ const About = () => {
             <span>Founded: {ABOUT_CONTENT.history.founded}</span>
             <span>&middot;</span>
             <span>Established: {ABOUT_CONTENT.history.established}</span>
-            <span>&middot;</span>
-            <span>Cert No: {ABOUT_CONTENT.history.certificateNo}</span>
           </ScrollReveal>
         </div>
 

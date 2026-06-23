@@ -64,8 +64,8 @@ const Footer = () => {
             Organization Status
           </h4>
           <p className="font-sans text-sm text-white/50 leading-relaxed">
-            Registered in Kenya with the Attorney General's Office (Registrar of Societies).<br />
-            <span className="text-ochre">Certificate No: {ABOUT_CONTENT.history.certificateNo}</span>
+            Turning Drylands Green was registered in 2024 in Kenya with the Attorney General's Office (Registrar of societies)<br />
+            {/*<span className="text-ochre">Certificate No: {ABOUT_CONTENT.history.certificateNo}</span>*/}
           </p>
         </div>
       </div>
@@ -78,7 +78,6 @@ const Footer = () => {
         <div className="flex gap-4">
           <span>Registered in Kenya</span>
           <span>&middot;</span>
-          <span>{ABOUT_CONTENT.history.certificateNo}</span>
         </div>
       </div>
     </footer>
