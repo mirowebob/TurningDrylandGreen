@@ -7,6 +7,9 @@ import figure2 from "../../assets/suswa erosion.jpg";
 import figure4 from "../../assets/Fig. 4-httpsafrica.wetlands.orgennewsusing-geo-data-to-improve-water-resource-management-in-kajiado-county.png";
 import figure5 from "../../assets/Figure 5-dry Ewaso Ng'iro River-bed in Isiolo.jpg";
 import figure6 from "../../assets/Figure 6-Tot in Elgeyo Marakwet.png";
+import figure7 from "../../assets/kisiriri.jpg";
+import figure8 from "../../assets/narok_town.jpg";
+import { caption } from "framer-motion/client";
 
 const PROBLEM_IMAGES = [
   {
@@ -39,6 +42,18 @@ const PROBLEM_IMAGES = [
     tag: "Regeneration",
     caption: "Early restoration work in Elgeyo Marakwet demonstrates green recovery potential.",
   },
+  {
+    src: figure7,
+    alt: "Kisiriri dried grazing land",
+    tag: "Inadeqaute pasture",
+    caption: "Kisiriri Narok Dried grazing land."
+  },
+  {
+    src: figure8,
+    alt: "flooded Narok Town",
+    tag: "Effects of Erosion",
+    caption: "Narok Town dilapidatd."
+  }
 ];
 
 const Problem = () => {
