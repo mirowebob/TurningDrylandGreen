@@ -25,7 +25,7 @@ const iconMap: Record<string, LucideIcon> = {
   Map: MapIcon,
   DeviceLaptop: Laptop,
 };
-
+const narrativ ="Turning Drylands Green (TDG) Initiative was formed out of dehumanizing live observations in Narok, Samburu and Baringo Counties ( and literally entire Drylands); the site of animal carcasses lettering dry grazing lands, children in a state of starvation-induced sleep, and mothers digging dry riverbeds for hours to scoop a cup of water, as a result of a harsh environment, crystallized our mission.\n We believe that Restoring Ecosystems is the most rational way to secure human livelihoods, then dignity.";
 const About = () => {
   return (
     <section id="about" className="bg-forest text-white py-24 px-6 relative overflow-hidden">

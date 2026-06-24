@@ -63,7 +63,7 @@ export const HERO_CONTENT = {
 export const PROBLEM_CONTENT = {
   eyebrow: "CONTEXT",
   paragraphs: [
-    "Over 84% of Kenya's landmass (approximately 587,000 square kilometers) is classified as Arid and Semi-Arid Lands (ASAL). These vast landscapes are incredibly fragile, increasingly harsh, and severely denuded.",
+    "Over 84% of Kenya's landmass (approximately 587,000 square kilometers) is classified as Arid and Semi-Arid Lands (ASAL). These vast landscape is invariably fragile, has and increasingly harsh environment and is denuded.",
     "Driven by global climate change, dryland degradation has accelerated rapidly. Drought frequency has shifted from a historical recurrence cycle of every 10–15 years (pre-1960s) to very frequently (less than a year) today, leaving ecosystems no time to recover.",
     "The consequences are devastating: Oxfam reports over KES 11.2 Billion in livestock losses, exacerbated by recurring flash floods that wash away topsoil, accelerate erosion, and cause direct loss of human and animal lives."
   ],
@@ -82,7 +82,7 @@ export const ABOUT_CONTENT = {
     authority: "Registrar of Societies, Attorney General's Office, Kenya",
   },
   mission: "Rehabilitating Kenya's Dryland Catchments for the Restoration of Denuded Landscapes, Securing Livelihoods",
-  narrative: "Turning Drylands Green (TDG) Foundation was formed out of direct field observations in Narok, Samburu, and Baringo counties. Witnessing animal carcasses littering dry grazing lands, children sleeping from hunger, and mothers digging dry riverbeds for hours to scoop a cup of water crystallised our mission. We believe that restoring ecosystems is the ultimate way to secure human livelihoods.",
+  narrative: "Turning Drylands Green (TDG) Initiative was formed out of dehumanizing live observations in Narok, Samburu and Baringo Counties ( and literally entire Drylands); the site of animal carcasses lettering dry grazing lands, children in a state of starvation-induced sleep, and mothers digging dry riverbeds for hours to scoop a cup of water, as a result of a harsh environment, crystallized our mission.\n We believe that Restoring Ecosystems is the most rational way to secure human livelihoods, then dignity.",
   team: [
     { role: "Team Leader", iconName: "Users" },
     { role: "Dryland Hydrologist", iconName: "Droplet" },
