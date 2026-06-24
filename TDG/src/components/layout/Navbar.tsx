@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { NAVBAR_CONTENT } from "../../data/content";
 import { useScrollPosition } from "../../hooks/useScrollPosition";
 import { Menu, X } from "lucide-react";
-import tdgLogo from "../../assets/tdg_logo.png";
+import tdgLogo from "../../assets/new_logo.jpg";
 
 const Navbar = () => {
   const scrollPosition = useScrollPosition();

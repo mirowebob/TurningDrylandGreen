@@ -1,6 +1,6 @@
 import React from "react";
 import { NAVBAR_CONTENT } from "../../data/content";
-import tdgLogo from "../../assets/tdg_logo.png";
+import tdgLogo from "../../assets/new_logo.jpg";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { HERO_CONTENT } from "../../data/content";
-import tdgLogo from "../../assets/tdg_logo.png";
+import tdgLogo from "../../assets/new_logo.jpg";
 
 const Hero = () => {
   const handleScrollTo = (id: string) => {
