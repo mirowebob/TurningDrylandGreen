@@ -56,7 +56,7 @@ const Hero = () => {
               className="h-10 w-10 rounded-full object-cover"
             />
             <span className="font-sans text-xs md:text-sm font-semibold tracking-[0.25em] text-sage uppercase">
-              Turning Drylands Green Foundation
+              Turning Drylands Green Initiative
             </span>
           </div>
         </motion.div>
