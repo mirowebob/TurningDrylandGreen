@@ -9,7 +9,7 @@ import figure5 from "../../assets/Figure 5-dry Ewaso Ng'iro River-bed in Isiolo.
 import figure6 from "../../assets/Figure 6-Tot in Elgeyo Marakwet.png";
 import figure7 from "../../assets/kisiriri.jpg";
 import figure8 from "../../assets/narok_town.jpg";
-import { caption } from "framer-motion/client";
+{/*import { caption } from "framer-motion/client";*/}
 
 const PROBLEM_IMAGES = [
   {
