@@ -92,7 +92,7 @@ export const ABOUT_CONTENT = {
     { role: "Environmentalist (Climate Change)", iconName: "Globe" },
     { role: "Construction Engineer", iconName: "Wrench" },
     { role: "Cartographer", iconName: "Map" },
-    {role: "IT Specialist", iconName: "DeviceLaptop" }
+    { role: "IT Specialist", iconName: "DeviceLaptop" }
   ] as TeamMemberData[],
 };
 
@@ -113,7 +113,7 @@ export const APPROACH_CONTENT = {
     {
       number: 3,
       title: "Development of Adequate Water Storage Infrastructure",
-      description : "Develop water storage infrastructure to harvest and store rainwater for communities, livestock, and ecosystem restoration."
+      description: "Develop water storage infrastructure to harvest and store rainwater for communities, livestock, and ecosystem restoration."
     },
     {
       number: 4,
@@ -150,12 +150,13 @@ export const GOALS_CONTENT = {
   eyebrow: "LOGFRAME",
   title: "Project Goals",
   cards: [
-     {
+    {
       number: "01",
-      title: "Community Mobilization and Empowerment",
+      title: "Community Mobilisation and Empowerment",
       outcomes: [
         "Local communities fully trained in modern dryland forest management",
         "Establishment of functional governance for catchment user groups",
+        "Entrench an in-built Gender Mainstreaming, M & E, as well as Youth & PWDs' Participation",
         "Equitable sharing of resources and management duties",
         "Empower displaced and returnee communities to own, lead and sustain rangeland restoration activities."
       ]
@@ -167,6 +168,7 @@ export const GOALS_CONTENT = {
         "Dilapidated and eroded waterways restored to natural flows",
         "Soil stabilization through deliberate vegetation on embankments",
         "Mitigation of destructive flash floods downstream",
+        "Construction of Drainage Canals to allow free flow of gush waters so as to reduce stagnisation that lead to flooding &/ or landslides",
         "Re-establish physical and social connectivity in areas fragmented by hydrological damage",
         "Conduct gully healing interventions to mitigate negative impacts on subsurface water levels",
         "Control land degradation through erosion prevention and soil stabilization"
@@ -180,7 +182,7 @@ export const GOALS_CONTENT = {
         "Excavated water pans, cut-off drains, and shallow wells operational",
         "Reduced trek times for community water collection"
       ]
-    },         
+    },
     {
       number: "04",
       title: "Forest Cover",
@@ -253,11 +255,11 @@ export const COLLABORATORS_CONTENT = {
 export const CONTACT_CONTENT = {
   eyebrow: "GET INVOLVED",
   title: "Partner With Us",
-  body: "While the Communities in the affected Catchments have largely been displaced (due to the prevailing harsh"+
-  " environment), have lost their livelihoods thus being rendered poor. TDG has the 'how' & expertise to assist "+
-  "in the transformation of this deplorable state; it is actively seeking Collaborators, Founders to augment "+
-  "developemnt activities in these vast Catchments.\n Our initial target is kshs. 105m(us$ 800,000) "+
-  "for the pilot Catchments in in 7 Counties (Baringo, Makueni, Isiolo, Kajiado, Kilifi, Narok & Turkana).",
+  body: "While the Communities in the affected Catchments have largely been displaced (due to the prevailing harsh" +
+    " environment), have lost their livelihoods thus being rendered poor. TDG has the 'how' & expertise to assist " +
+    "in the transformation of this deplorable state; it is actively seeking Collaborators, Donors to augment " +
+    "developemnt activities in these vast Catchments.\n Our initial target is kshs. 105m(us$ 800,000) " +
+    "for the pilot Catchments in in 7 Counties (Baringo, Makueni, Isiolo, Kajiado, Kilifi, Narok & Turkana).",
   prioritySites: "Of these, the priority Catchments are Lake Baringo, River Kwa Ngwesu (Makueni), & Enkare Narok Catchments @Kshs 15 Million Each (Kshs 45 Million in Total)",
   details: {
     teamLeader: "Bill A. Lijoh",
