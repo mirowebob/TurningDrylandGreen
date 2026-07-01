@@ -9,7 +9,8 @@ import figure5 from "../../assets/Figure 5-dry Ewaso Ng'iro River-bed in Isiolo.
 import figure6 from "../../assets/Figure 6-Tot in Elgeyo Marakwet.png";
 import figure7 from "../../assets/kisiriri.jpg";
 import figure8 from "../../assets/narok_town.jpg";
-{/*import { caption } from "framer-motion/client";*/}
+import figure9 from "../../assets/marigat-Loruk.jpeg"
+{/*import { caption } from "framer-motion/client";*/ }
 
 const PROBLEM_IMAGES = [
   {
@@ -53,6 +54,12 @@ const PROBLEM_IMAGES = [
     alt: "flooded Narok Town",
     tag: "Effects of Erosion",
     caption: "Narok Town dilapidatd."
+  },
+  {
+    src: figure9,
+    alt: "Marigat Loruk",
+    tag: "Marigat-Loruk Road Submerged",
+    caption: "Marigat-Loruk Road Submerged.Rehabilitating the catchment will have significant mitigation, & sustainably improve the livelihoods of the communities.",
   }
 ];
 
