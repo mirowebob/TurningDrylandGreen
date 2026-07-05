@@ -1,6 +1,7 @@
 package com.turningdrylandsgreen.tdgbackend.controllers;
 
 import com.turningdrylandsgreen.tdgbackend.dto.AdminProfile;
+import com.turningdrylandsgreen.tdgbackend.dto.ProjectsCreationDTO;
 import com.turningdrylandsgreen.tdgbackend.services.AdminServices;
 import com.turningdrylandsgreen.tdgbackend.services.CloudinaryService;
 import com.turningdrylandsgreen.tdgbackend.dto.ProblemLoading;
@@ -32,6 +33,12 @@ public class AdminControllers {
     @Operation(summary = "endpoint to create a profile and message for admin")
     public ResponseEntity<?> createAdminWithMessage(@ModelAttribute AdminProfile profile){
         return new ResponseEntity<HttpStatus>(adminServices.createAdminWithMessage(profile),HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/add-project", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "endpoint to add th projects")
+    public ResponseEntity<?> addProject(@ModelAttribute ProjectsCreationDTO dto){
+        return new ResponseEntity<HttpStatus>(adminServices.createProject(dto), HttpStatus.OK);
     }
 
 }
