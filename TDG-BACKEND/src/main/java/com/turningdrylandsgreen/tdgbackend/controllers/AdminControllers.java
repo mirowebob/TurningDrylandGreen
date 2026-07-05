@@ -1,5 +1,6 @@
 package com.turningdrylandsgreen.tdgbackend.controllers;
 
+import com.turningdrylandsgreen.tdgbackend.dto.AdminProfile;
 import com.turningdrylandsgreen.tdgbackend.services.AdminServices;
 import com.turningdrylandsgreen.tdgbackend.services.CloudinaryService;
 import com.turningdrylandsgreen.tdgbackend.dto.ProblemLoading;
@@ -25,6 +26,12 @@ public class AdminControllers {
     public ResponseEntity<?> createProblem(@ModelAttribute ProblemLoading problemLoading){
 
         return new ResponseEntity<>(adminServices.createProblem(problemLoading),HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/create-profile", consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "endpoint to create a profile and message for admin")
+    public ResponseEntity<?> createAdminWithMessage(@ModelAttribute AdminProfile profile){
+        return new ResponseEntity<HttpStatus>(adminServices.createAdminWithMessage(profile),HttpStatus.OK);
     }
 
 }

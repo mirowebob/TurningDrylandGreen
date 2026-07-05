@@ -32,4 +32,16 @@ public class CloudinaryService {
         }
         return uploadUrls;
     }
+    public String uploadProfileImage(MultipartFile file) throws IOException {
+        if (file == null || file.isEmpty()) {
+            return null;
+        }
+
+        Map<?, ?> uploadProfile = cloudinary.uploader().upload(
+                file.getBytes(),
+                ObjectUtils.asMap("resource_type", "image")
+        );
+
+        return (String) uploadProfile.get("secure_url");
+    }
 }
