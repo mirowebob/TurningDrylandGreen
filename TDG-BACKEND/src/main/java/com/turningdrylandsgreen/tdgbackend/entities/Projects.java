@@ -10,6 +10,7 @@ import java.util.List;
 
 @Entity
 @Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Projects {
@@ -22,14 +23,24 @@ public class Projects {
 
     @Column(length = 5000)
     private String description;
+
+    @Enumerated(EnumType.STRING)
     private ProjectStatus status;
+
     private String location;
     private String county;
+
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> images;
+
     private String communityName;
+
     @Column(length = 1500)
     private String impact;
+
     @Column(length = 1500)
     private String outcome;
+
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> tags;
 }

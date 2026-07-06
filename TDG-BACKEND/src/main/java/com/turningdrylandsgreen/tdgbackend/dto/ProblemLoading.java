@@ -17,6 +17,9 @@ public class ProblemLoading {
     @Schema(nullable = false)
     private String problemDescription;
 
+    @Schema(nullable = true)
+    private String tag;
+
     private List<MultipartFile> multipartFileList;
 
 }
