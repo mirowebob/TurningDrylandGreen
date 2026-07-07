@@ -4,6 +4,7 @@ import com.turningdrylandsgreen.tdgbackend.entities.*;
 import com.turningdrylandsgreen.tdgbackend.services.AdminServices;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
+@Slf4j
 public class PublicController {
 
     private final AdminServices adminServices;
@@ -26,6 +28,7 @@ public class PublicController {
     @GetMapping("/problems")
     @Operation(summary = "Public endpoint to retrieve all problem entries")
     public ResponseEntity<List<ProblemImages>> getProblems() {
+        log.info("fetching the problems");
         return new ResponseEntity<>(adminServices.getAllProblems(), HttpStatus.OK);
     }
 
@@ -39,5 +42,12 @@ public class PublicController {
     @Operation(summary = "Public endpoint to retrieve all testimonials")
     public ResponseEntity<List<Testimonials>> getTestimonials() {
         return new ResponseEntity<>(adminServices.getAllTestimonials(), HttpStatus.OK);
+    }
+
+    @GetMapping("/profiles")
+    @Operation(summary = "endpoint to get all admin profiles")
+    public ResponseEntity<List<AdminProfiles>> getAllProfiles() {
+        log.info("fetching profiles");
+        return new ResponseEntity<>(adminServices.getAllProfiles(), HttpStatus.OK);
     }
 }

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { ABOUT_CONTENT } from "../../data/content";
 import ScrollReveal from "../ui/ScrollReveal";
 import {
@@ -12,6 +13,8 @@ import {
   Map as MapIcon,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { fetchAdminProfiles } from "../../services/api";
+import type { AdminProfileDTO } from "../../services/api";
 
 // Map icon string to actual Lucide component
 const iconMap: Record<string, LucideIcon> = {
@@ -27,6 +30,40 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 const About = () => {
+  const [adminProfiles, setAdminProfiles] = useState<AdminProfileDTO[]>([]);
+
+  useEffect(() => {
+    const getProfiles = async () => {
+      try {
+        const data = await fetchAdminProfiles();
+        if (data && data.length > 0) {
+          setAdminProfiles(data);
+        } else {
+          // Fallback to static data if no profiles saved in database yet
+          setAdminProfiles(
+            ABOUT_CONTENT.admins.map((admin) => ({
+              fullName: admin.name,
+              title: admin.position,
+              message: admin.message,
+              profileImageUrl: admin.image,
+            }))
+          );
+        }
+      } catch (err) {
+        console.error("Failed to load admin profiles, falling back to static content", err);
+        setAdminProfiles(
+          ABOUT_CONTENT.admins.map((admin) => ({
+            fullName: admin.name,
+            title: admin.position,
+            message: admin.message,
+            profileImageUrl: admin.image,
+          }))
+        );
+      }
+    };
+    getProfiles();
+  }, []);
+
   return (
     <section id="about" className="bg-forest text-white py-24 px-6 relative overflow-hidden">
       {/* Background decoration */}
@@ -59,6 +96,55 @@ const About = () => {
           <p className="font-sans text-base md:text-lg text-white/85 leading-relaxed bg-[#203615]/40 border border-[#8BAF5A]/10 rounded-2xl p-8 shadow-inner">
             {ABOUT_CONTENT.narrative}
           </p>
+        </ScrollReveal>
+
+        <ScrollReveal direction="up" delay={0.45} className="w-full max-w-6xl">
+          <div className="relative min-h-[360px] overflow-visible py-4">
+            <div className="absolute left-[8%] top-6 h-28 w-28 rounded-full bg-emerald-400/20 blur-3xl" />
+            <div className="absolute bottom-4 right-[10%] h-32 w-32 rounded-full bg-amber-300/20 blur-3xl" />
+
+            <div className="relative flex flex-wrap justify-center gap-6 md:gap-8">
+              {adminProfiles.map((admin, index) => (
+                <div
+                  key={`${admin.fullName}-${index}`}
+                  className={`group relative w-full max-w-[320px] flex-shrink-0 overflow-hidden rounded-[2rem] border border-white/15 bg-[linear-gradient(135deg,rgba(255,255,255,0.18),rgba(255,255,255,0.08))] p-6 text-center shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur-xl transition-all duration-700 hover:-translate-y-3 hover:scale-[1.03] ${index % 2 === 0 ? "md:translate-y-6 md:rotate-[-2deg]" : "md:-translate-y-4 md:rotate-[2deg]"}`}
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-br ${index % 2 === 0 ? "from-emerald-400/25 via-transparent to-amber-300/20" : "from-sky-400/25 via-transparent to-lime-300/20"}`} />
+                  <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-white/10 blur-2xl" />
+                  <div className="relative flex flex-col items-center gap-4">
+                    <div className="relative">
+                      {admin.profileImageUrl ? (
+                        <img
+                          src={admin.profileImageUrl}
+                          alt={admin.fullName}
+                          className="h-24 w-24 rounded-full border-4 border-white/20 object-cover shadow-lg"
+                        />
+                      ) : (
+                        <div className="w-24 h-24 rounded-full bg-purple-500/20 text-purple-200 flex items-center justify-center font-bold text-xl uppercase border-4 border-white/20 shadow-lg">
+                          {admin.fullName.substring(0, 2)}
+                        </div>
+                      )}
+                      <span className="absolute bottom-1 right-1 h-4 w-4 rounded-full border-2 border-[#16280e] bg-emerald-300" />
+                    </div>
+                    <div>
+                      <div className="mb-2 inline-flex rounded-full border border-white/15 bg-black/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-amber-100">
+                        Admin
+                      </div>
+                      <h3 className="font-display text-xl text-white">
+                        {admin.fullName}
+                      </h3>
+                      <p className="mt-1 text-sm font-sans text-emerald-100">
+                        {admin.title}
+                      </p>
+                      <p className="mt-3 text-sm font-sans leading-relaxed text-white/80">
+                        “{admin.message}”
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </ScrollReveal>
 
         {/* Team Grid */}

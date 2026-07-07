@@ -36,6 +36,22 @@ export interface CollaboratorData {
   logo?: string;
 }
 
+export interface ProjectItemData {
+  title: string;
+  location: string;
+  description: string;
+  tags: string[];
+  status?: string;
+  impact?: string;
+  outcome?: string;
+}
+
+export interface TestimonialData {
+  name: string;
+  role: string;
+  quote: string;
+}
+
 export const NAVBAR_CONTENT = {
   logo: {
     monogram: "TDG",
@@ -46,6 +62,7 @@ export const NAVBAR_CONTENT = {
     { label: "About", href: "#about" },
     { label: "Approach", href: "#approach" },
     { label: "Impact", href: "#impact" },
+    { label: "Projects", href: "/projects" },
     { label: "Outcomes", href: "#outcomes" },
     { label: "Collaborate", href: "#collaborate" },
     { label: "Contact", href: "#contact" },
@@ -83,6 +100,42 @@ export const ABOUT_CONTENT = {
   },
   mission: "Rehabilitating Kenya's Dryland Catchments for the Restoration of Denuded Landscapes, Securing Livelihoods",
   narrative: "Turning Drylands Green (TDG) Initiative was formed out of dehumanizing live observations in Narok, Samburu and Baringo Counties ( and literally entire Drylands); the site of animal carcasses lettering dry grazing lands, children in a state of starvation-induced sleep, and mothers digging dry riverbeds for hours to scoop a cup of water, as a result of a harsh environment, crystallized our mission.\n We believe that Restoring Ecosystems is the most rational way to secure human livelihoods, then dignity.",
+  admins: [
+    {
+      name: "Dr. Leah Wanjiku",
+      position: "Founder & Executive Director",
+      message: "We are restoring drylands by combining science, community leadership, and practical water solutions.",
+      image: "/admin-profile.svg",
+    },
+    {
+      name: "Dr. Leah Wanjiku",
+      position: "Founder & Executive Director",
+      message: "We are restoring drylands by combining science, community leadership, and practical water solutions.",
+      image: "/admin-profile.svg",
+    },
+    {
+      name: "Dr. Leah Wanjiku",
+      position: "Founder & Executive Director",
+      message: "We are restoring drylands by combining science, community leadership, and practical water solutions.",
+      image: "/admin-profile.svg",
+    },
+    {
+      name: "Dr. Leah Wanjiku",
+      position: "Founder & Executive Director",
+      message: "We are restoring drylands by combining science, community leadership, and practical water solutions.",
+      image: "/admin-profile.svg",
+    }, {
+      name: "Dr. Leah Wanjiku",
+      position: "Founder & Executive Director",
+      message: "We are restoring drylands by combining science, community leadership, and practical water solutions.",
+      image: "/admin-profile.svg",
+    }, {
+      name: "Dr. Leah Wanjiku",
+      position: "Founder & Executive Director",
+      message: "We are restoring drylands by combining science, community leadership, and practical water solutions.",
+      image: "/admin-profile.svg",
+    },
+  ],
   team: [
     { role: "Team Leader", iconName: "Users" },
     { role: "Dryland Hydrologist", iconName: "Droplet" },
@@ -94,6 +147,71 @@ export const ABOUT_CONTENT = {
     { role: "Cartographer", iconName: "Map" },
     { role: "IT Specialist", iconName: "DeviceLaptop" }
   ] as TeamMemberData[],
+};
+
+export const PROJECTS_CONTENT = {
+  hero: {
+    eyebrow: "PROJECTS",
+    title: "Restoration work rooted in the communities we serve",
+    description: "From early water harvesting to long-term landscape healing, TDG is delivering practical projects that restore livelihoods and strengthen resilient ecosystems.",
+    highlights: ["Water harvesting", "Community-led restoration", "Livelihood recovery"],
+  },
+  summary: [
+    { value: "7", label: "counties reached", description: "Catchments mapped and prioritized for intervention." },
+    { value: "12+", label: "community groups engaged", description: "Local stewards trained and mobilized across the landscape." },
+    { value: "100%", label: "focus on resilience", description: "Projects are designed to improve water, soil, and food security." },
+  ],
+  ongoing: [
+    {
+      title: "Baringo Catchment Rehabilitation",
+      location: "Baringo County",
+      description: "A multi-step restoration program focused on gullies, runoff control, and community water access.",
+      tags: ["Water pans", "Soil stabilization", "Community training"],
+      status: "Ongoing",
+      impact: "Improved water availability and reduced erosion for nearby households and livestock.",
+    },
+    {
+      title: "Narok Dryland Water Harvesting",
+      location: "Narok County",
+      description: "Installing water retention systems and restoring degraded paths to increase access during dry spells.",
+      tags: ["Water harvesting", "Roadside restoration", "Livelihood support"],
+      status: "Ongoing",
+      impact: "Stronger dry season resilience and better access to scarce water resources.",
+    },
+  ] as ProjectItemData[],
+  completed: [
+    {
+      title: "Samburu Community Nursery Launch",
+      location: "Samburu County",
+      description: "Established a local nursery with native species and trained youth and women in propagation.",
+      tags: ["Nursery", "Youth engagement", "Native species"],
+      outcome: "Created a local source of seedlings for future restoration work.",
+    },
+    {
+      title: "Kajiado Soil Recovery Demonstration",
+      location: "Kajiado County",
+      description: "Piloted simple soil conservation techniques that improved ground cover and reduced runoff on degraded land.",
+      tags: ["Soil restoration", "Demonstration site", "Community learning"],
+      outcome: "Visible improvements in ground cover and community confidence in restoration methods.",
+    },
+  ] as ProjectItemData[],
+  testimonials: [
+    {
+      name: "Moses Leteipa",
+      role: "Community elder, Baringo",
+      quote: "The water pans are giving our families a chance to survive the dry months without walking so far.",
+    },
+    {
+      name: "Amina Kibet",
+      role: "Women leader, Narok",
+      quote: "We now see hope again because the restored land is supporting our livestock and small gardens.",
+    },
+    {
+      name: "James Njoroge",
+      role: "Youth volunteer, Samburu",
+      quote: "The training helped us turn restoration into something practical and lasting for our community.",
+    },
+  ] as TestimonialData[],
 };
 
 export const APPROACH_CONTENT = {

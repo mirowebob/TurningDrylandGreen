@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { NAVBAR_CONTENT } from "../../data/content";
 import { useScrollPosition } from "../../hooks/useScrollPosition";
 import { Menu, X } from "lucide-react";
@@ -6,6 +7,8 @@ import tdgLogo from "../../assets/new_logo.jpg";
 
 const Navbar = () => {
   const scrollPosition = useScrollPosition();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
 
@@ -13,6 +16,20 @@ const Navbar = () => {
 
   // Track active section for highlights
   useEffect(() => {
+    const targetFromStorage = sessionStorage.getItem("scrollTarget");
+    if (targetFromStorage && location.pathname === "/") {
+      const targetElement = document.getElementById(targetFromStorage.replace("#", ""));
+      if (targetElement) {
+        window.setTimeout(() => {
+          window.scrollTo({
+            top: targetElement.offsetTop - 80,
+            behavior: "smooth",
+          });
+        }, 100);
+      }
+      sessionStorage.removeItem("scrollTarget");
+    }
+
     const handleScroll = () => {
       const sections = NAVBAR_CONTENT.links.map((link) => link.href.replace("#", ""));
       const currentScroll = window.scrollY + 100;
@@ -37,6 +54,27 @@ const Navbar = () => {
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     setIsMenuOpen(false);
+
+    if (href === "/") {
+      if (location.pathname === "/") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        navigate(href);
+      }
+      return;
+    }
+
+    if (href.startsWith("/")) {
+      navigate(href);
+      return;
+    }
+
+    if (location.pathname !== "/") {
+      sessionStorage.setItem("scrollTarget", href);
+      navigate("/");
+      return;
+    }
+
     const targetId = href.replace("#", "");
     const targetElement = document.getElementById(targetId);
     if (targetElement) {
@@ -49,11 +87,10 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-soil shadow-lg border-b border-forest/20 py-4"
-          : "bg-transparent py-6"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+        ? "bg-soil shadow-lg border-b border-forest/20 py-4"
+        : "bg-transparent py-6"
+        }`}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
@@ -80,9 +117,10 @@ const Navbar = () => {
               key={link.href}
               href={link.href}
               onClick={(e) => handleLinkClick(e, link.href)}
-              className={`font-sans text-sm tracking-wide transition-all duration-200 hover:text-sage ${
-                activeSection === link.href ? "text-sage font-medium" : "text-white/80"
-              }`}
+              className={`font-sans text-sm tracking-wide transition-all duration-200 hover:text-sage ${(link.href.startsWith("/") && location.pathname === link.href) || activeSection === link.href
+                ? "text-sage font-medium"
+                : "text-white/80"
+                }`}
             >
               {link.label}
             </a>
@@ -119,9 +157,10 @@ const Navbar = () => {
               key={link.href}
               href={link.href}
               onClick={(e) => handleLinkClick(e, link.href)}
-              className={`font-sans text-2xl tracking-wide transition-all ${
-                activeSection === link.href ? "text-sage font-semibold" : "text-white/80"
-              }`}
+              className={`font-sans text-2xl tracking-wide transition-all ${(link.href.startsWith("/") && location.pathname === link.href) || activeSection === link.href
+                ? "text-sage font-semibold"
+                : "text-white/80"
+                }`}
             >
               {link.label}
             </a>
@@ -129,7 +168,7 @@ const Navbar = () => {
           <a
             href="#contact"
             onClick={(e) => handleLinkClick(e, "#contact")}
-            className="font-sans text-lg font-semibold tracking-wider text-soil bg-sage px-8 py-3 rounded hover:bg-sage/90 transition-all mt-4"
+            className="font-sans text-lg font-semibold tracking-wider text-soil bg-sage px-8 py-3 rounded hover:bg-sage/90 transition-all"
           >
             {NAVBAR_CONTENT.cta}
           </a>

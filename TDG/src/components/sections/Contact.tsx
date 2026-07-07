@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { CONTACT_CONTENT } from "../../data/content";
 import ScrollReveal from "../ui/ScrollReveal";
-import { User, Phone, Mail, MapPin, Send, CheckCircle } from "lucide-react";
+import DonationModal from "../ui/DonationModal";
+import { User, Phone, Mail, MapPin, Send, CheckCircle, Heart } from "lucide-react";
 
 const Contact = () => {
+  const [isDonationOpen, setIsDonationOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     organization: "",
@@ -43,7 +45,7 @@ const Contact = () => {
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-          
+
           {/* Left Column: Call-to-Action & Contact details */}
           <div className="lg:col-span-6 flex flex-col gap-8">
             <div className="flex flex-col gap-3">
@@ -65,8 +67,28 @@ const Contact = () => {
                 {CONTACT_CONTENT.body}
               </p>
               <p className="font-sans text-md font-semibold text-red-300 leading-relaxed">
-                  {CONTACT_CONTENT.prioritySites}
-                </p>
+                {CONTACT_CONTENT.prioritySites}
+              </p>
+            </ScrollReveal>
+
+            <ScrollReveal direction="up" delay={0.35}>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsDonationOpen(true)}
+                  className="inline-flex items-center gap-2 rounded-full border border-emerald-300/40 bg-emerald-300/15 px-5 py-2.5 text-sm font-semibold text-emerald-100 transition-all duration-200 hover:bg-emerald-300/25"
+                >
+                  <Heart size={16} />
+                  Support with a donation
+                </button>
+                <button
+                  type="button"
+                  onClick={() => document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                  className="rounded-full border border-white/15 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-white/15"
+                >
+                  Send a partnership message
+                </button>
+              </div>
             </ScrollReveal>
 
             {/* Priority sites callout */}
@@ -138,8 +160,8 @@ const Contact = () => {
           {/* Right Column: Interactive Contact Form */}
           <div className="lg:col-span-6 flex items-center">
             <ScrollReveal direction="left" delay={0.3} className="w-full">
-              <div className="bg-[#1A1208] border border-white/10 rounded-2xl p-8 md:p-10 shadow-2xl relative">
-                
+              <div id="contact-form" className="bg-[#1A1208] border border-white/10 rounded-2xl p-8 md:p-10 shadow-2xl relative">
+
                 {isSubmitted ? (
                   <div className="flex flex-col items-center justify-center text-center gap-6 py-12 animate-fade-in">
                     <div className="w-16 h-16 rounded-full bg-sage/20 border border-sage flex items-center justify-center text-sage">
@@ -242,6 +264,8 @@ const Contact = () => {
 
         </div>
       </div>
+
+      <DonationModal isOpen={isDonationOpen} onClose={() => setIsDonationOpen(false)} />
     </section>
   );
 };

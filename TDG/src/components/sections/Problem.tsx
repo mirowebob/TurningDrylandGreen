@@ -1,7 +1,12 @@
+import { useEffect, useState } from "react";
 import { PROBLEM_CONTENT } from "../../data/content";
 import ScrollReveal from "../ui/ScrollReveal";
 import StatCard from "../ui/StatCard";
 import ProblemImagesCard from "../ui/ProblemImagesCard";
+import { fetchProblems } from "../../services/api";
+import type { ProblemImageDTO } from "../../services/api";
+
+// ── Static fallback images (shown when database has no entries) ───────────────
 import figure1 from "../../assets/Figure 1- Eroded Stream in Southern Kajiado.jpg";
 import figure2 from "../../assets/suswa erosion.jpg";
 import figure4 from "../../assets/Fig. 4-httpsafrica.wetlands.orgennewsusing-geo-data-to-improve-water-resource-management-in-kajiado-county.png";
@@ -9,61 +14,52 @@ import figure5 from "../../assets/Figure 5-dry Ewaso Ng'iro River-bed in Isiolo.
 import figure6 from "../../assets/Figure 6-Tot in Elgeyo Marakwet.png";
 import figure7 from "../../assets/kisiriri.jpg";
 import figure8 from "../../assets/narok_town.jpg";
-import figure9 from "../../assets/marigat-Loruk.jpeg"
-{/*import { caption } from "framer-motion/client";*/ }
+import figure9 from "../../assets/marigat-Loruk.jpeg";
 
-const PROBLEM_IMAGES = [
-  {
-    src: figure1,
-    alt: "Eroded stream in southern Kajiado",
-    tag: "Erosion",
-    caption: "Stream erosion in southern Kajiado is stripping fertile topsoil.",
-  },
-  {
-    src: figure2,
-    alt: "Gully erosion in Suswa Narok",
-    tag: "Gully Erosion",
-    caption: "Severe gulley erosion in Suswa Narok threatens grazing land.",
-  },
-  {
-    src: figure4,
-    alt: "Water resource management in Kajiado",
-    tag: "Water Management",
-    caption: "Geo-data improves water resource management strategies.",
-  },
-  {
-    src: figure5,
-    alt: "Dry Ewaso Ng'iro river-bed in Isiolo",
-    tag: "River Loss",
-    caption: "The dry Ewaso Ng'iro river-bed shows how water scarcity impacts communities.",
-  },
-  {
-    src: figure6,
-    alt: "Tree planting in Elgeyo Marakwet",
-    tag: "Regeneration",
-    caption: "Early restoration work in Elgeyo Marakwet demonstrates green recovery potential.",
-  },
-  {
-    src: figure7,
-    alt: "Kisiriri dried grazing land",
-    tag: "Inadeqaute pasture",
-    caption: "Kisiriri Narok Dried grazing land."
-  },
-  {
-    src: figure8,
-    alt: "flooded Narok Town",
-    tag: "Effects of Erosion",
-    caption: "Narok Town dilapidatd."
-  },
-  {
-    src: figure9,
-    alt: "Marigat Loruk",
-    tag: "Marigat-Loruk Road Submerged",
-    caption: "Marigat-Loruk Road Submerged.Rehabilitating the catchment will have significant mitigation, & sustainably improve the livelihoods of the communities.",
-  }
+const STATIC_IMAGES = [
+  { src: figure1, alt: "Eroded stream in southern Kajiado",             tag: "Erosion",              caption: "Stream erosion in southern Kajiado is stripping fertile topsoil." },
+  { src: figure2, alt: "Gully erosion in Suswa Narok",                  tag: "Gully Erosion",        caption: "Severe gulley erosion in Suswa Narok threatens grazing land." },
+  { src: figure4, alt: "Water resource management in Kajiado",          tag: "Water Management",     caption: "Geo-data improves water resource management strategies." },
+  { src: figure5, alt: "Dry Ewaso Ng'iro river-bed in Isiolo",          tag: "River Loss",           caption: "The dry Ewaso Ng'iro river-bed shows how water scarcity impacts communities." },
+  { src: figure6, alt: "Tree planting in Elgeyo Marakwet",              tag: "Regeneration",         caption: "Early restoration work in Elgeyo Marakwet demonstrates green recovery potential." },
+  { src: figure7, alt: "Kisiriri dried grazing land",                   tag: "Inadequate Pasture",   caption: "Kisiriri Narok Dried grazing land." },
+  { src: figure8, alt: "Flooded Narok Town",                            tag: "Effects of Erosion",   caption: "Narok Town dilapidated." },
+  { src: figure9, alt: "Marigat Loruk",                                 tag: "Marigat-Loruk Road",   caption: "Marigat-Loruk Road Submerged. Rehabilitating the catchment will significantly improve livelihoods." },
 ];
 
+// ── Adapts a backend entry into the card props shape ─────────────────────────
+function toCardProps(entry: ProblemImageDTO) {
+  return {
+    src: entry.imageUrls?.[0] ?? "",
+    alt: entry.title,
+    tag: entry.tag ?? entry.title,
+    caption: entry.description,
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 const Problem = () => {
+  const [dynamicImages, setDynamicImages] = useState<ProblemImageDTO[]>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    fetchProblems()
+      .then((data) => {
+        setDynamicImages(data);
+      })
+      .catch(() => {
+        // Silently fall back to static images — backend may not be available yet
+      })
+      .finally(() => setLoaded(true));
+  }, []);
+
+  // Use database images when available; otherwise use the curated static set
+  const imageCards =
+    loaded && dynamicImages.length > 0
+      ? dynamicImages.map(toCardProps)
+      : STATIC_IMAGES;
+
   return (
     <section id="problem" className="bg-parchment py-24 px-6 relative overflow-hidden">
       {/* Decorative earthy organic texture using background gradient accents */}
@@ -111,8 +107,14 @@ const Problem = () => {
         {/* Image Cards Row */}
         <div className="mt-14">
           <ScrollReveal direction="up" delay={0.1}>
+            {/* Source indicator */}
+            {loaded && dynamicImages.length > 0 && (
+              <p className="mb-4 text-xs text-soil/40 text-right tracking-widest uppercase">
+                {dynamicImages.length} live {dynamicImages.length === 1 ? "entry" : "entries"} from database
+              </p>
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center items-start">
-              {PROBLEM_IMAGES.map((image, i) => (
+              {imageCards.map((image, i) => (
                 <ProblemImagesCard
                   key={i}
                   src={image.src}
