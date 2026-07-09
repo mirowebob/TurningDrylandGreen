@@ -1,9 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
     ArrowRight,
-    ArrowUpRight,
     CheckCircle2,
-    Filter,
     Heart,
     Leaf,
     MapPin,
@@ -12,6 +10,11 @@ import {
     Sprout,
     Users,
     X,
+    Loader2,
+    Target,
+    TrendingUp,
+    ArrowUpRight,
+    Calendar,
 } from "lucide-react";
 import Navbar from "../layout/Navbar";
 import Footer from "../layout/Footer";
@@ -23,12 +26,9 @@ import kisiriri from "../../assets/kisiriri.jpg";
 import suswaErosion from "../../assets/suswa erosion.jpg";
 import { fetchProjects, fetchTestimonials, type ProjectDTO, type TestimonialDTO } from "../../services/api";
 
-const IMAGE_POOL = [marigat, kisiriri, suswaErosion, narokTown];
-const pickImage = (i: number) => IMAGE_POOL[i % IMAGE_POOL.length];
+const FALLBACK_IMAGES = [marigat, kisiriri, suswaErosion, narokTown];
+const getImage = (i: number) => FALLBACK_IMAGES[i % FALLBACK_IMAGES.length];
 
-// Local shape used for rendering — a DTO plus a lowercase "type" we derive
-// from `status`, so the rest of the component doesn't need to care about
-// the enum casing.
 type DisplayProject = ProjectDTO & { type: "ongoing" | "completed" };
 
 const toDisplayProject = (p: ProjectDTO): DisplayProject => ({
@@ -36,11 +36,8 @@ const toDisplayProject = (p: ProjectDTO): DisplayProject => ({
     type: p.status === "ONGOING" ? "ongoing" : "completed",
 });
 
-/* ---------------------------------------------------------
-   Scroll-reveal wrapper. Fades + lifts children into view
-   the first time they cross the viewport, then leaves them.
---------------------------------------------------------- */
-const Reveal = ({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) => {
+/* ---------- Scroll Reveal ---------- */
+const Reveal = ({ children, className = "" }: { children: ReactNode; className?: string }) => {
     const ref = useRef(null);
     const [visible, setVisible] = useState(false);
 
@@ -54,7 +51,7 @@ const Reveal = ({ children, delay = 0, className = "" }: { children: ReactNode; 
                     observer.disconnect();
                 }
             },
-            { threshold: 0.15 }
+            { threshold: 0.1 }
         );
         observer.observe(node);
         return () => observer.disconnect();
@@ -63,120 +60,43 @@ const Reveal = ({ children, delay = 0, className = "" }: { children: ReactNode; 
     return (
         <div
             ref={ref}
-            className={`transition-all duration-700 ease-out motion-reduce:transition-none motion-reduce:transform-none ${visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+            className={`transition-all duration-700 ease-out ${visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
                 } ${className}`}
-            style={{ transitionDelay: visible ? `${delay}ms` : "0ms" }}
         >
             {children}
         </div>
     );
 };
 
-/* ---------------------------------------------------------
-   Counts up the numeric portion of a stat value once it
-   scrolls into view (e.g. "1,240 Ha" -> animates 0 -> 1240).
---------------------------------------------------------- */
-const AnimatedStat = ({ value }: { value: string }) => {
+/* ---------- Animated Counter ---------- */
+const AnimatedNumber = ({ value }: { value: number }) => {
     const ref = useRef<HTMLSpanElement | null>(null);
-    const [display, setDisplay] = useState<number | null>(null);
-
-    const match = String(value).match(/[\d,]+/);
-    const numeric = match ? parseInt(match[0].replace(/,/g, ""), 10) : null;
-    const prefix = match?.index != null ? value.slice(0, match.index) : "";
-    const suffix = match?.index != null ? value.slice(match.index + match[0].length) : "";
+    const [display, setDisplay] = useState(0);
 
     useEffect(() => {
         const node = ref.current;
-        if (!node || numeric === null) return;
+        if (!node) return;
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (!entry.isIntersecting) return;
                 observer.disconnect();
-                const duration = 1200;
+                const duration = 1500;
                 const start = performance.now();
                 const tick = (now: number) => {
                     const progress = Math.min((now - start) / duration, 1);
                     const eased = 1 - Math.pow(1 - progress, 3);
-                    setDisplay(Math.round(eased * numeric));
+                    setDisplay(Math.round(eased * value));
                     if (progress < 1) requestAnimationFrame(tick);
                 };
                 requestAnimationFrame(tick);
             },
-            { threshold: 0.4 }
+            { threshold: 0.5 }
         );
         observer.observe(node);
         return () => observer.disconnect();
-    }, [numeric]);
+    }, [value]);
 
-    if (numeric === null) {
-        return <span ref={ref}>{value}</span>;
-    }
-
-    return (
-        <span ref={ref}>
-            {prefix}
-            {(display ?? 0).toLocaleString()}
-            {suffix}
-        </span>
-    );
-};
-
-/* ---------------------------------------------------------
-   Rotates through project photos + their location, fading
-   between them every few seconds. Falls back to a static
-   pool of local images if no projects have loaded yet.
---------------------------------------------------------- */
-const HeroImageCarousel = ({
-    slides,
-}: {
-    slides: { image: string; location: string }[];
-}) => {
-    const [index, setIndex] = useState(0);
-
-    useEffect(() => {
-        if (slides.length <= 1) return;
-        const interval = setInterval(() => {
-            setIndex((i) => (i + 1) % slides.length);
-        }, 4500);
-        return () => clearInterval(interval);
-    }, [slides.length]);
-
-    // Keep index in range if the slide list shrinks (e.g. after a refetch)
-    useEffect(() => {
-        if (index >= slides.length) setIndex(0);
-    }, [slides.length, index]);
-
-    if (slides.length === 0) return null;
-
-    return (
-        <div className="relative h-full min-h-[420px] w-full overflow-hidden sm:min-h-[480px] lg:min-h-[560px]">
-            {slides.map((slide, i) => (
-                <img
-                    key={slide.image + i}
-                    src={slide.image}
-                    alt={slide.location || "Restoration project"}
-                    className={`kb-image absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${i === index ? "opacity-100" : "opacity-0"
-                        }`}
-                />
-            ))}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-            <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full bg-black/40 px-3 py-1.5 text-xs text-white/85 backdrop-blur-sm">
-                <MapPin size={13} />
-                {slides[index]?.location || "Kenya"}
-            </div>
-            {slides.length > 1 && (
-                <div className="absolute bottom-4 right-4 flex gap-1.5">
-                    {slides.map((_, i) => (
-                        <span
-                            key={i}
-                            className={`h-1.5 rounded-full transition-all duration-500 ${i === index ? "w-4 bg-white/90" : "w-1.5 bg-white/40"
-                                }`}
-                        />
-                    ))}
-                </div>
-            )}
-        </div>
-    );
+    return <span ref={ref}>{display.toLocaleString()}</span>;
 };
 
 const ProjectsPage = () => {
@@ -189,27 +109,6 @@ const ProjectsPage = () => {
 
     useEffect(() => {
         let cancelled = false;
-
-        const loadProjects = async () => {
-            try {
-                const data = await fetchProjects();
-                if (!cancelled) setProjects(data);
-            } catch (err) {
-                console.error("Failed to load projects:", err);
-            } finally {
-                if (!cancelled) setIsLoading(false);
-            }
-        };
-
-        loadProjects();
-        return () => {
-            cancelled = true;
-        };
-    }, []);
-
-    useEffect(() => {
-        let cancelled = false;
-
         const loadData = async () => {
             try {
                 const [projectData, testimonialData] = await Promise.all([
@@ -221,27 +120,21 @@ const ProjectsPage = () => {
                     setTestimonials(testimonialData);
                 }
             } catch (err) {
-                console.error("Failed to load page data:", err);
+                console.error("Failed to load data:", err);
             } finally {
                 if (!cancelled) setIsLoading(false);
             }
         };
-
         loadData();
-        return () => {
-            cancelled = true;
-        };
+        return () => { cancelled = true; };
     }, []);
 
-    const allProjects = useMemo<DisplayProject[]>(
-        () => projects.map(toDisplayProject),
-        [projects]
-    );
+    const allProjects = useMemo(() => projects.map(toDisplayProject), [projects]);
 
     const locations = useMemo(() => {
         const counts = new Map<string, number>();
         allProjects.forEach((p) => counts.set(p.location, (counts.get(p.location) || 0) + 1));
-        return Array.from(counts.entries());
+        return Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
     }, [allProjects]);
 
     const filtered = allProjects.filter(
@@ -250,349 +143,363 @@ const ProjectsPage = () => {
             (!locationFilter || p.location === locationFilter)
     );
 
-    const ongoingCount = allProjects.filter((p) => p.type === "ongoing").length;
-    const completedCount = allProjects.filter((p) => p.type === "completed").length;
-
-    const statusTabs = [
-        { key: "all", label: "All work", count: allProjects.length },
-        { key: "ongoing", label: "Ongoing", count: ongoingCount },
-        { key: "completed", label: "Completed", count: completedCount },
-    ];
-
-    const summaryStats = useMemo(() => {
-        const counties = Array.from(
-            new Set(projects.map((p) => p.county).filter(Boolean))
-        );
-        const communities = Array.from(
-            new Set(projects.map((p) => p.communityName).filter(Boolean))
-        );
-        const ongoing = projects.filter((p) => p.status === "ONGOING").length;
-        const completed = projects.filter((p) => p.status === "COMPLETED").length;
-
-        return [
-            {
-                label: "Projects",
-                value: String(projects.length),
-                description:
-                    projects.length > 0
-                        ? `${ongoing} ongoing and ${completed} completed across our program areas.`
-                        : "Loading current project count…",
-            },
-            {
-                label: "Counties",
-                value: String(counties.length),
-                description:
-                    counties.length > 0
-                        ? `Active work in ${counties.slice(0, 3).join(", ")}${counties.length > 3 ? ", and more" : ""
-                        }.`
-                        : "Mapping county coverage…",
-            },
-            {
-                label: "Communities",
-                value: String(communities.length),
-                description:
-                    communities.length > 0
-                        ? `Partnering with communities including ${communities
-                            .slice(0, 3)
-                            .join(", ")}${communities.length > 3 ? ", and more" : ""}.`
-                        : "Gathering community partners…",
-            },
-        ];
+    const stats = useMemo(() => {
+        const counties = new Set(projects.map((p) => p.county).filter(Boolean));
+        const communities = new Set(projects.map((p) => p.communityName).filter(Boolean));
+        return {
+            projects: projects.length,
+            counties: counties.size,
+            communities: communities.size,
+            ongoing: projects.filter((p) => p.status === "ONGOING").length,
+            completed: projects.filter((p) => p.status === "COMPLETED").length,
+        };
     }, [projects]);
 
-    const heroSlides = useMemo(() => {
-        const fromProjects = projects
-            .flatMap((p) =>
-                (p.images ?? []).map((image) => ({ image, location: p.location }))
-            )
-            .filter((s) => !!s.image);
-
-        if (fromProjects.length > 0) return fromProjects;
-
-        // Fallback while loading or if no project has images yet
-        return IMAGE_POOL.map((image) => ({ image, location: "Kenya" }));
+    const heroImage = useMemo(() => {
+        const projectWithImage = projects.find((p) => p.images?.length > 0);
+        return projectWithImage?.images?.[0] || marigat;
     }, [projects]);
 
     return (
         <>
-            <div className="min-h-screen overflow-x-hidden bg-forest text-white">
+            <div className="min-h-screen bg-[#060b07] text-white">
                 <style>{`
-                    @keyframes driftSlow {
-                        0%, 100% { transform: translate(0, 0) scale(1); }
-                        50% { transform: translate(-3%, 4%) scale(1.08); }
+                    @keyframes float {
+                        0%, 100% { transform: translateY(0px); }
+                        50% { transform: translateY(-10px); }
                     }
-                    @keyframes driftSlowReverse {
-                        0%, 100% { transform: translate(0, 0) scale(1.05); }
-                        50% { transform: translate(4%, -3%) scale(1); }
-                    }
-                    @keyframes kenBurns {
-                        0% { transform: scale(1.06); }
-                        100% { transform: scale(1.16); }
-                    }
-                    @keyframes drawPath {
-                        to { stroke-dashoffset: 0; }
-                    }
-                    @keyframes floatDot {
-                        0%, 100% { transform: translateY(0); }
-                        50% { transform: translateY(-6px); }
-                    }
-                    .orb-a { animation: driftSlow 16s ease-in-out infinite; }
-                    .orb-b { animation: driftSlowReverse 20s ease-in-out infinite; }
-                    .kb-image { animation: kenBurns 14s ease-out forwards; }
-                    .grow-path { stroke-dasharray: 900; stroke-dashoffset: 900; animation: drawPath 2.4s ease-out forwards; animation-delay: .3s; }
-                    .float-dot { animation: floatDot 3s ease-in-out infinite; }
-                    .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+                    .float-anim { animation: float 6s ease-in-out infinite; }
+                    .no-scrollbar { scrollbar-width: none; }
                     .no-scrollbar::-webkit-scrollbar { display: none; }
                     @media (prefers-reduced-motion: reduce) {
-                        .orb-a, .orb-b, .kb-image, .grow-path, .float-dot { animation: none !important; }
+                        .float-anim { animation: none !important; }
                     }
                 `}</style>
 
                 <Navbar />
 
-                {/* HERO */}
-                <section className="relative px-6 pb-16 pt-32 md:px-8 lg:px-12">
-                    <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                        <div className="orb-a absolute -left-24 top-10 h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl" />
-                        <div className="orb-b absolute right-0 top-40 h-96 w-96 rounded-full bg-amber-400/10 blur-3xl" />
+                {/* ===== HERO ===== */}
+                <section className="relative px-6 pt-32 pb-16 md:px-8 lg:px-12">
+                    <div className="absolute inset-0 overflow-hidden">
+                        <div className="absolute top-20 left-10 w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[120px]" />
+                        <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-emerald-400/5 rounded-full blur-[120px]" />
                     </div>
 
-                    <div className="relative mx-auto flex max-w-7xl flex-col gap-10">
-                        <Reveal className="group relative overflow-hidden rounded-[2rem] border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.25)]">
-                            <HeroImageCarousel slides={heroSlides} />
-
-                            {/* Overlaid content sits above the carousel's own gradient/dots */}
-                            <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 via-black/20 to-transparent p-8 md:p-12">
-                                <div className="pointer-events-auto max-w-2xl">
-                                    <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/30 bg-emerald-300/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.35em] text-emerald-100 backdrop-blur-sm">
-                                        <Leaf size={14} className="animate-pulse" />
+                    <div className="relative mx-auto max-w-7xl">
+                        <Reveal>
+                            <div className="grid lg:grid-cols-2 gap-12 items-center">
+                                <div className="space-y-8">
+                                    <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-300">
+                                        <Leaf size={16} />
                                         {PROJECTS_CONTENT.hero.eyebrow}
                                     </div>
-                                    <h1 className="mt-5 font-display text-4xl leading-tight text-white sm:text-5xl lg:text-6xl">
-                                        {PROJECTS_CONTENT.hero.title}
+
+                                    <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight">
+                                        Turning
+                                        <span className="block text-emerald-400">Drylands Green</span>
                                     </h1>
-                                    <p className="mt-4 max-w-xl text-lg leading-relaxed text-white/85">
+
+                                    <p className="text-lg text-white/60 max-w-lg leading-relaxed">
                                         {PROJECTS_CONTENT.hero.description}
                                     </p>
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsDonationOpen(true)}
-                                        className="mt-6 inline-flex items-center gap-2 rounded-full border border-emerald-300/40 bg-emerald-300/90 px-5 py-2.5 text-sm font-semibold text-forest shadow-lg shadow-black/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-emerald-200"
-                                    >
-                                        <Heart size={16} />
-                                        Support this work
-                                    </button>
-                                </div>
-                            </div>
-                        </Reveal>
 
-                        <div className="relative -mb-2 -mt-2 hidden h-10 w-full items-center justify-center md:flex">
-                            <svg viewBox="0 0 800 40" className="h-10 w-full max-w-4xl" fill="none">
-                                <path
-                                    d="M0 20 Q 100 0, 200 20 T 400 20 T 600 20 T 800 20"
-                                    stroke="url(#growGradient)"
-                                    strokeWidth="2"
-                                    className="grow-path"
-                                />
-                                <defs>
-                                    <linearGradient id="growGradient" x1="0" y1="0" x2="800" y2="0">
-                                        <stop offset="0%" stopColor="#34d399" stopOpacity="0" />
-                                        <stop offset="50%" stopColor="#34d399" stopOpacity="0.8" />
-                                        <stop offset="100%" stopColor="#fbbf24" stopOpacity="0" />
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                        </div>
-
-                        <div className="grid gap-6 lg:grid-cols-3">
-                            {summaryStats.map((item, i) => (
-                                <Reveal key={item.label} delay={i * 120}>
-                                    <div className="group h-full rounded-[1.5rem] border border-white/10 bg-[#203615]/70 p-6 shadow-lg shadow-black/10 transition-all duration-300 hover:-translate-y-1.5 hover:border-emerald-300/30 hover:shadow-emerald-900/30">
-                                        <p className="font-display text-3xl font-semibold text-white transition-colors group-hover:text-emerald-200">
-                                            <AnimatedStat value={item.value} />
-                                        </p>
-                                        <p className="mt-2 text-sm uppercase tracking-[0.25em] text-sage">{item.label}</p>
-                                        <p className="mt-3 text-sm leading-relaxed text-white/70">{item.description}</p>
-                                    </div>
-                                </Reveal>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* WHERE WE WORK — location strip, doubles as a filter */}
-                <section className="px-6 py-6 md:px-8 lg:px-12">
-                    <div className="mx-auto max-w-7xl">
-                        <Reveal className="rounded-[1.75rem] border border-white/10 bg-[#1a2e10]/70 p-6 md:p-8">
-                            <div className="flex flex-wrap items-center justify-between gap-3">
-                                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-sage">
-                                    <MapPin size={14} />
-                                    Where the work is happening
-                                </div>
-                                {locationFilter && (
-                                    <button
-                                        onClick={() => setLocationFilter(null)}
-                                        className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/70 transition-colors hover:border-white/30 hover:text-white"
-                                    >
-                                        <X size={12} />
-                                        Clear
-                                    </button>
-                                )}
-                            </div>
-                            <div className="mt-5 flex flex-wrap gap-3">
-                                {locations.map(([location, count], i) => {
-                                    const active = locationFilter === location;
-                                    return (
+                                    <div className="flex flex-wrap gap-4">
                                         <button
-                                            key={location}
-                                            onClick={() => setLocationFilter(active ? null : location)}
-                                            style={{ transitionDelay: `${i * 30}ms` }}
-                                            className={`group inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-all duration-300 ${active
-                                                ? "border-[#c17a4d]/60 bg-[#c17a4d]/20 text-[#f2c9a8]"
-                                                : "border-white/10 bg-white/[0.04] text-white/75 hover:-translate-y-0.5 hover:border-[#c17a4d]/30 hover:bg-[#c17a4d]/10"
-                                                }`}
+                                            onClick={() => setIsDonationOpen(true)}
+                                            className="group inline-flex items-center gap-3 rounded-full bg-emerald-500 px-8 py-4 font-semibold text-white transition-all hover:bg-emerald-400 hover:shadow-xl hover:shadow-emerald-500/20 hover:-translate-y-0.5"
                                         >
-                                            <span
-                                                className={`h-1.5 w-1.5 rounded-full ${active ? "bg-[#f2c9a8]" : "bg-emerald-300/70"
-                                                    }`}
-                                            />
-                                            {location}
-                                            <span className="text-xs text-white/40">{count}</span>
+                                            <Heart size={20} className="group-hover:scale-110 transition-transform" />
+                                            Support Our Work
                                         </button>
-                                    );
-                                })}
+                                    </div>
+                                </div>
+
+                                <div className="relative">
+                                    <div className="relative overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
+                                        <img
+                                            src={heroImage}
+                                            alt="Restoration work"
+                                            className="w-full h-[400px] lg:h-[500px] object-cover"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                                        <div className="absolute bottom-6 left-6 flex items-center gap-2 rounded-full bg-black/40 backdrop-blur-md px-4 py-2 text-sm border border-white/10">
+                                            <MapPin size={14} className="text-emerald-400" />
+                                            <span>Kenya</span>
+                                        </div>
+                                    </div>
+                                    <div className="absolute -bottom-6 -left-6 float-anim hidden lg:block">
+                                        <div className="rounded-2xl border border-white/10 bg-black/80 backdrop-blur-xl p-4 shadow-2xl">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-10 w-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                                                    <Target size={18} className="text-emerald-400" />
+                                                </div>
+                                                <div>
+                                                    <div className="text-2xl font-bold">
+                                                        <AnimatedNumber value={stats.projects} />
+                                                    </div>
+                                                    <div className="text-xs text-white/50">Active Projects</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </Reveal>
                     </div>
                 </section>
 
-                {/* PROJECT INDEX — filterable, editorial layout */}
-                <section className="px-6 py-14 md:px-8 lg:px-12">
+                {/* ===== QUICK STATS ===== */}
+                <section className="px-6 pb-8 md:px-8 lg:px-12">
                     <div className="mx-auto max-w-7xl">
-                        <Reveal className="mb-10 flex flex-wrap items-end justify-between gap-6">
-                            <div className="flex items-center gap-3">
-                                <div className="rounded-full bg-amber-300/15 p-2 text-amber-200">
-                                    <Sparkles size={18} />
-                                </div>
-                                <div>
-                                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sage">
-                                        The work, project by project
-                                    </p>
-                                    <h2 className="font-display text-2xl text-white md:text-3xl">
-                                        From first seedling to lasting change
-                                    </h2>
-                                </div>
-                            </div>
-
-                            <div className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] p-1">
-                                <Filter size={13} className="ml-2 text-white/40" />
-                                {statusTabs.map((tab) => (
-                                    <button
-                                        key={tab.key}
-                                        onClick={() => setStatusFilter(tab.key)}
-                                        className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-300 ${statusFilter === tab.key
-                                            ? "bg-emerald-300/90 text-forest shadow-sm"
-                                            : "text-white/65 hover:text-white"
-                                            }`}
+                        <Reveal>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {[
+                                    { label: "Total Projects", value: stats.projects, icon: Target },
+                                    { label: "Counties Reached", value: stats.counties, icon: MapPin },
+                                    { label: "Communities", value: stats.communities, icon: Users },
+                                    { label: "Completed", value: stats.completed, icon: CheckCircle2 },
+                                ].map((stat) => (
+                                    <div
+                                        key={stat.label}
+                                        className="group rounded-2xl border border-white/5 bg-white/5 p-6 hover:bg-white/10 transition-all hover:-translate-y-1"
                                     >
-                                        {tab.label}
-                                        <span className="ml-1.5 text-xs opacity-70">{tab.count}</span>
-                                    </button>
+                                        <stat.icon size={20} className="text-emerald-400 mb-4" />
+                                        <div className="text-3xl font-bold">
+                                            {isLoading ? (
+                                                <Loader2 size={24} className="animate-spin text-white/30" />
+                                            ) : (
+                                                <AnimatedNumber value={stat.value} />
+                                            )}
+                                        </div>
+                                        <div className="text-sm text-white/40 mt-1">{stat.label}</div>
+                                    </div>
                                 ))}
                             </div>
                         </Reveal>
+                    </div>
+                </section>
 
-                        {isLoading ? (
-                            <Reveal className="rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-12 text-center">
-                                <p className="text-sm text-white/60">Loading projects…</p>
-                            </Reveal>
-                        ) : filtered.length === 0 ? (
-                            <Reveal className="rounded-[1.75rem] border border-dashed border-white/15 bg-white/[0.03] p-12 text-center">
-                                <p className="font-display text-xl text-white">Nothing here yet</p>
-                                <p className="mt-2 text-sm text-white/60">
-                                    No projects match this combination yet.
-                                </p>
-                            </Reveal>
-                        ) : (
-                            <div className="flex flex-col gap-16">
-                                {filtered.map((project, index) => {
-                                    const reversed = index % 2 === 1;
-                                    const isOngoing = project.type === "ongoing";
-                                    const imageSrc = project.images?.[0] || pickImage(index);
-                                    return (
-                                        <Reveal key={project.id} delay={80}>
-                                            <article
-                                                className={`group grid items-center gap-8 lg:grid-cols-2 ${reversed ? "lg:[&>*:first-child]:order-2" : ""
+                {/* ===== FILTER BAR ===== */}
+                <section className="px-6 pb-12 md:px-8 lg:px-12 sticky top-20 z-30">
+                    <div className="mx-auto max-w-7xl">
+                        <Reveal>
+                            <div className="rounded-2xl border border-white/10 bg-black/80 backdrop-blur-xl p-4">
+                                <div className="flex flex-col md:flex-row gap-4 md:items-center justify-between">
+                                    {/* Status Filter */}
+                                    <div className="flex gap-2 rounded-xl bg-white/5 p-1.5">
+                                        {[
+                                            { key: "all", label: "All Projects" },
+                                            { key: "ongoing", label: "Ongoing" },
+                                            { key: "completed", label: "Completed" },
+                                        ].map((tab) => (
+                                            <button
+                                                key={tab.key}
+                                                onClick={() => setStatusFilter(tab.key)}
+                                                className={`rounded-lg px-5 py-2.5 text-sm font-medium transition-all ${statusFilter === tab.key
+                                                    ? "bg-emerald-500 text-white shadow-lg"
+                                                    : "text-white/50 hover:text-white hover:bg-white/5"
                                                     }`}
                                             >
-                                                <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.25)]">
-                                                    <div className="h-64 w-full overflow-hidden sm:h-80 lg:h-96">
+                                                {tab.label}
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    {/* Location Filter */}
+                                    <div className="flex items-center gap-3 flex-wrap">
+                                        <span className="text-sm text-white/40 flex items-center gap-2">
+                                            <MapPin size={14} className="text-emerald-400" />
+                                            Location:
+                                        </span>
+                                        {locationFilter && (
+                                            <button
+                                                onClick={() => setLocationFilter(null)}
+                                                className="flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-400/20 px-3 py-1.5 text-xs text-emerald-300 hover:bg-emerald-500/20"
+                                            >
+                                                <X size={12} />
+                                                Clear
+                                            </button>
+                                        )}
+                                        {locations.map(([loc, count]) => (
+                                            <button
+                                                key={loc}
+                                                onClick={() => setLocationFilter(locationFilter === loc ? null : loc)}
+                                                className={`rounded-full px-4 py-1.5 text-sm transition-all ${locationFilter === loc
+                                                    ? "bg-emerald-500/90 text-white"
+                                                    : "text-white/50 hover:text-white hover:bg-white/5"
+                                                    }`}
+                                            >
+                                                {loc}
+                                                <span className="ml-1.5 text-xs opacity-60">{count}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </Reveal>
+                    </div>
+                </section>
+
+                {/* ===== PROJECTS - MAIN DISPLAY ===== */}
+                <section className="px-6 pb-16 md:px-8 lg:px-12">
+                    <div className="mx-auto max-w-7xl">
+                        {/* Section Header */}
+                        <Reveal className="mb-12">
+                            <div className="flex items-center gap-3">
+                                <Sparkles size={24} className="text-amber-400" />
+                                <div>
+                                    <p className="text-sm uppercase tracking-wider text-white/40">Our Impact</p>
+                                    <h2 className="text-3xl md:text-4xl font-bold">
+                                        {statusFilter === "ongoing" ? "Active Projects" :
+                                            statusFilter === "completed" ? "Completed Work" :
+                                                "All Projects"}
+                                    </h2>
+                                </div>
+                            </div>
+                        </Reveal>
+
+                        {/* Loading State */}
+                        {isLoading && (
+                            <div className="flex justify-center py-20">
+                                <Loader2 size={40} className="animate-spin text-emerald-400" />
+                            </div>
+                        )}
+
+                        {/* Empty State */}
+                        {!isLoading && filtered.length === 0 && (
+                            <Reveal>
+                                <div className="text-center py-20">
+                                    <div className="text-6xl mb-4">🌱</div>
+                                    <p className="text-xl text-white/70">No projects found</p>
+                                    <p className="text-sm text-white/40 mt-2">Try adjusting your filters</p>
+                                </div>
+                            </Reveal>
+                        )}
+
+                        {/* Project Cards - Large Display */}
+                        {!isLoading && filtered.length > 0 && (
+                            <div className="space-y-12">
+                                {filtered.map((project, i) => {
+                                    const isOngoing = project.type === "ongoing";
+                                    const image = project.images?.[0] || getImage(i);
+                                    const isEven = i % 2 === 0;
+
+                                    return (
+                                        <Reveal key={project.id}>
+                                            <article className={`grid lg:grid-cols-2 gap-8 lg:gap-16 items-center ${!isEven ? "lg:[&>*:first-child]:order-2" : ""
+                                                }`}>
+                                                {/* Image Side */}
+                                                <div className="relative overflow-hidden rounded-3xl border border-white/10 shadow-2xl group">
+                                                    <div className="aspect-[4/3] overflow-hidden">
                                                         <img
-                                                            src={imageSrc}
+                                                            src={image}
                                                             alt={project.title}
-                                                            className={`h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${isOngoing ? "" : "grayscale-[15%] group-hover:grayscale-0"
-                                                                }`}
+                                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                                         />
                                                     </div>
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent" />
-                                                    <span
-                                                        className={`absolute right-4 top-4 flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] backdrop-blur-sm ${isOngoing
-                                                            ? "border-amber-300/30 bg-black/40 text-amber-100"
-                                                            : "border-emerald-300/30 bg-black/40 text-emerald-100"
-                                                            }`}
-                                                    >
-                                                        {isOngoing && <span className="float-dot h-1.5 w-1.5 rounded-full bg-amber-300" />}
-                                                        {isOngoing ? "Ongoing" : "Completed"}
-                                                    </span>
-                                                    <span className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-black/40 px-3 py-1.5 text-xs text-white/85 backdrop-blur-sm">
-                                                        <MapPin size={12} />
-                                                        {project.location}
-                                                    </span>
-                                                </div>
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-                                                <div>
-                                                    <span className="text-xs font-semibold uppercase tracking-[0.3em] text-white/35">
-                                                        {String(index + 1).padStart(2, "0")} — {isOngoing ? "In progress" : "Completed"}
-                                                    </span>
-                                                    <h3 className="mt-3 font-display text-2xl text-white transition-colors group-hover:text-emerald-200 md:text-3xl">
-                                                        {project.title}
-                                                    </h3>
-                                                    <p className="mt-4 text-base leading-relaxed text-white/75">
-                                                        {project.description}
-                                                    </p>
-                                                    <div className="mt-5 flex flex-wrap gap-2">
-                                                        {project.tags.map((tag) => (
-                                                            <span
-                                                                key={tag}
-                                                                className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/75"
-                                                            >
-                                                                {tag}
-                                                            </span>
-                                                        ))}
+                                                    {/* Status Badge */}
+                                                    <div className={`absolute top-6 right-6 flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold backdrop-blur-md ${isOngoing
+                                                        ? "border-amber-400/40 bg-black/50 text-amber-200"
+                                                        : "border-emerald-400/40 bg-black/50 text-emerald-200"
+                                                        }`}>
+                                                        {isOngoing && <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />}
+                                                        {isOngoing ? "In Progress" : "Completed"}
                                                     </div>
 
-                                                    {isOngoing ? (
-                                                        project.impact && (
-                                                            <div className="mt-6 rounded-2xl border border-emerald-300/20 bg-emerald-400/10 p-4 text-sm text-emerald-100">
-                                                                <div className="flex items-center gap-2 font-semibold">
-                                                                    <CheckCircle2 size={16} />
-                                                                    <span>Expected impact</span>
-                                                                </div>
-                                                                <p className="mt-2 leading-relaxed text-emerald-50/90">
-                                                                    {project.impact}
-                                                                </p>
+                                                    {/* Location & Community */}
+                                                    <div className="absolute bottom-6 left-6 flex flex-wrap gap-3">
+                                                        <div className="flex items-center gap-2 rounded-full bg-black/60 backdrop-blur-md px-4 py-2 text-sm text-white/90 border border-white/10">
+                                                            <MapPin size={14} className="text-emerald-400" />
+                                                            {project.location}, {project.county}
+                                                        </div>
+                                                        {project.communityName && (
+                                                            <div className="flex items-center gap-2 rounded-full bg-emerald-500/20 backdrop-blur-md px-4 py-2 text-sm text-emerald-200 border border-emerald-400/20">
+                                                                <Users size={14} />
+                                                                {project.communityName}
                                                             </div>
-                                                        )
-                                                    ) : (
-                                                        project.outcome && (
-                                                            <div className="mt-6 flex items-center gap-2 text-sm font-medium text-sage transition-all duration-300 group-hover:gap-3 group-hover:text-emerald-200">
-                                                                <ArrowRight size={16} />
-                                                                <span>{project.outcome}</span>
-                                                            </div>
-                                                        )
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                {/* Content Side */}
+                                                <div className="space-y-6">
+                                                    {/* Project Number */}
+                                                    <div className="flex items-center gap-4">
+                                                        <span className="text-5xl font-bold text-white/10">
+                                                            {String(i + 1).padStart(2, "0")}
+                                                        </span>
+                                                        <div>
+                                                            <span className={`text-xs font-semibold uppercase tracking-[0.3em] ${isOngoing ? "text-amber-400" : "text-emerald-400"
+                                                                }`}>
+                                                                {isOngoing ? "Ongoing Initiative" : "Completed Project"}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Title */}
+                                                    <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight group-hover:text-emerald-200 transition-colors">
+                                                        {project.title}
+                                                    </h3>
+
+                                                    {/* Description */}
+                                                    <p className="text-lg leading-relaxed text-white/70">
+                                                        {project.description}
+                                                    </p>
+
+                                                    {/* Tags */}
+                                                    {project.tags && project.tags.length > 0 && (
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {project.tags.map((tag) => (
+                                                                <span
+                                                                    key={tag}
+                                                                    className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/60 hover:border-white/20 hover:text-white/80 transition-all cursor-default"
+                                                                >
+                                                                    {tag}
+                                                                </span>
+                                                            ))}
+                                                        </div>
                                                     )}
+
+                                                    {/* Impact / Outcome */}
+                                                    <div className={`rounded-2xl border p-6 ${isOngoing
+                                                        ? "border-amber-400/20 bg-amber-500/5"
+                                                        : "border-emerald-400/20 bg-emerald-500/5"
+                                                        }`}>
+                                                        <div className="flex items-center gap-2 mb-3">
+                                                            {isOngoing ? (
+                                                                <TrendingUp size={20} className="text-amber-400" />
+                                                            ) : (
+                                                                <CheckCircle2 size={20} className="text-emerald-400" />
+                                                            )}
+                                                            <span className={`font-semibold ${isOngoing ? "text-amber-300" : "text-emerald-300"
+                                                                }`}>
+                                                                {isOngoing ? "Expected Impact" : "Outcome Achieved"}
+                                                            </span>
+                                                        </div>
+                                                        <p className={`leading-relaxed ${isOngoing ? "text-amber-100/80" : "text-emerald-100/80"
+                                                            }`}>
+                                                            {isOngoing ? project.impact : project.outcome}
+                                                        </p>
+                                                    </div>
+
+                                                    {/* Action Link */}
+                                                    <button
+                                                        onClick={() => setIsDonationOpen(true)}
+                                                        className={`inline-flex items-center gap-2 font-semibold transition-all hover:gap-3 ${isOngoing ? "text-amber-400 hover:text-amber-300" : "text-emerald-400 hover:text-emerald-300"
+                                                            }`}
+                                                    >
+                                                        <span>Support this project</span>
+                                                        <ArrowRight size={18} />
+                                                    </button>
                                                 </div>
                                             </article>
+
+                                            {/* Divider */}
+                                            {i < filtered.length - 1 && (
+                                                <div className="mt-12 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                                            )}
                                         </Reveal>
                                     );
                                 })}
@@ -601,66 +508,83 @@ const ProjectsPage = () => {
                     </div>
                 </section>
 
-                {/* TESTIMONIALS — horizontal, swipeable */}
-                <section className="px-6 py-16 md:px-8 lg:px-12">
+                {/* ===== TESTIMONIALS ===== */}
+                <section className="px-6 py-20 md:px-8 lg:px-12 border-t border-white/5">
                     <div className="mx-auto max-w-7xl">
-                        <Reveal className="mb-8 flex items-center gap-3">
-                            <div className="rounded-full bg-[#c17a4d]/15 p-2 text-[#e7ad83]">
-                                <Users size={18} />
-                            </div>
-                            <div>
-                                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sage">
-                                    Community voices
+                        <Reveal className="mb-12">
+                            <div className="text-center">
+                                <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/20 bg-amber-500/10 px-4 py-2 text-sm text-amber-300 mb-6">
+                                    <Users size={16} />
+                                    Community Voices
+                                </div>
+                                <h2 className="text-3xl md:text-4xl font-bold mb-4">Stories of Change</h2>
+                                <p className="text-white/50 max-w-lg mx-auto">
+                                    Hear directly from the communities we work with
                                 </p>
-                                <h2 className="font-display text-2xl text-white">Testimonials from the field</h2>
                             </div>
                         </Reveal>
 
-                        <div className="relative">
-                            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-forest to-transparent md:w-16" />
-                            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-forest to-transparent md:w-16" />
-
-                            <div className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4">
-                                {testimonials.length === 0 ? (
-                                    <p className="px-2 text-sm text-white/60">No testimonials yet — check back soon.</p>
-                                ) : (
-                                    testimonials.map((testimonial) => (
-                                        <article
-                                            key={testimonial.id}
-                                            className="group relative w-[85%] shrink-0 snap-start overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#243c18]/80 p-6 shadow-[0_12px_40px_rgba(0,0,0,0.15)] transition-all duration-300 hover:-translate-y-1.5 hover:border-[#c17a4d]/25 sm:w-[60%] lg:w-[calc(33.333%-1rem)]"
-                                        >
-                                            <Quote
-                                                size={72}
-                                                className="pointer-events-none absolute -right-3 -top-3 text-white/[0.04] transition-transform duration-500 group-hover:scale-110"
-                                            />
-                                            <div className="flex items-center gap-1 text-amber-200">
-                                                {Array.from({ length: 5 }).map((_, idx) => (
-                                                    <Quote key={idx} size={13} />
-                                                ))}
-                                            </div>
-                                            <p className="relative mt-4 text-sm leading-relaxed text-white/80">
-                                                &ldquo;{testimonial.message}&rdquo;
-                                            </p>
-                                            <div className="relative mt-6 flex items-center justify-between border-t border-white/10 pt-4">
-                                                <div>
-                                                    <p className="font-semibold text-white">{testimonial.name}</p>
-                                                    <p className="text-sm text-white/60">{testimonial.role}</p>
-                                                </div>
-                                                <ArrowUpRight
-                                                    size={16}
-                                                    className="text-white/20 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#e7ad83]"
-                                                />
-                                            </div>
-                                        </article>
-                                    ))
-                                )}
+                        {testimonials.length === 0 ? (
+                            <div className="text-center py-12">
+                                <Quote size={40} className="text-white/10 mx-auto mb-4" />
+                                <p className="text-white/40">Stories coming soon</p>
                             </div>
-                        </div>
+                        ) : (
+                            <div className="no-scrollbar flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory">
+                                {testimonials.map((t) => (
+                                    <div
+                                        key={t.id}
+                                        className="w-[350px] shrink-0 snap-start rounded-2xl border border-white/5 bg-white/5 p-8 hover:border-amber-500/20 hover:bg-white/10 transition-all"
+                                    >
+                                        <Quote size={40} className="text-amber-500/20 mb-6" />
+                                        <p className="text-white/80 text-lg leading-relaxed mb-6">
+                                            "{t.message}"
+                                        </p>
+                                        <div className="flex items-center gap-4 border-t border-white/5 pt-6">
+                                            <div className="h-12 w-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 font-bold text-lg">
+                                                {t.name.charAt(0)}
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold text-white">{t.name}</p>
+                                                <p className="text-sm text-white/40">{t.role}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
 
-                        <Reveal delay={150} className="mt-8 flex justify-center">
-                            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2.5 text-sm text-white/70">
-                                <Sprout size={15} className="text-emerald-300" />
-                                Every story here traces back to soil, seed, and a community that stayed.
+                        <Reveal>
+                            <div className="mt-10 text-center">
+                                <div className="inline-flex items-center gap-2 text-emerald-400 text-sm">
+                                    <Sprout size={16} />
+                                    Every story starts with a seed of hope
+                                </div>
+                            </div>
+                        </Reveal>
+                    </div>
+                </section>
+
+                {/* ===== CTA ===== */}
+                <section className="px-6 pb-20 md:px-8 lg:px-12">
+                    <div className="mx-auto max-w-7xl">
+                        <Reveal>
+                            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-900/50 to-emerald-800/30 border border-emerald-500/20 p-12 md:p-16 text-center">
+                                <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                                <div className="relative">
+                                    <Heart size={48} className="text-emerald-400 mx-auto mb-6" />
+                                    <h3 className="text-3xl md:text-5xl font-bold mb-4">Be Part of the Change</h3>
+                                    <p className="text-white/60 text-lg max-w-2xl mx-auto mb-8">
+                                        Your support helps us restore drylands, empower communities, and create lasting environmental impact across Kenya
+                                    </p>
+                                    <button
+                                        onClick={() => setIsDonationOpen(true)}
+                                        className="inline-flex items-center gap-3 rounded-full bg-emerald-500 px-10 py-5 font-semibold text-white text-lg transition-all hover:bg-emerald-400 hover:shadow-2xl hover:shadow-emerald-500/20 hover:-translate-y-0.5"
+                                    >
+                                        <Heart size={24} />
+                                        Make a Difference Today
+                                    </button>
+                                </div>
                             </div>
                         </Reveal>
                     </div>

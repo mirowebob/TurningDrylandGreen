@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { ArrowRight, CheckCircle2, Heart, Loader2, ShieldCheck, Sparkles, X } from "lucide-react";
+import { toBuniPhoneFormat } from "../../utils/toBuniPhoneFormat.ts";
 
 /**
  * DonationForm
@@ -9,8 +10,8 @@ import { ArrowRight, CheckCircle2, Heart, Loader2, ShieldCheck, Sparkles, X } fr
  * `onSubmit` prop:
  *
  *   <DonationForm
- *     onSubmit={async ({ amount, currency, name, email, message, anonymous }) => {
- *       await fetch("/api/donations", { method: "POST", body: JSON.stringify({...}) });
+ *     onSubmit={async ({ amount, currency, name, phone, message, anonymous }) => {
+ *       await initiateStkPush({ ... }); // or whatever your backend call is
  *     }}
  *   />
  *
@@ -19,6 +20,9 @@ import { ArrowRight, CheckCircle2, Heart, Loader2, ShieldCheck, Sparkles, X } fr
  *
  * Pass `onClose` to get a close (X) button in the top corner — useful
  * when this sits inside DonationModal.jsx or any modal of your own.
+ *
+ * Pass `onStatusChange` if a parent needs to know when a submission is
+ * in flight (e.g. to block the modal from closing mid-payment).
  *
  * Adjust AMOUNT_PRESETS below to reflect your program's real costs.
  * ------------------------------------------------------------------
@@ -31,16 +35,14 @@ const AMOUNT_PRESETS = [
     { value: 10000, impact: "A full community training day" },
 ];
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 type DonationStatus = "idle" | "submitting" | "success";
-type FormErrors = Partial<Record<"amount" | "name" | "email" | "submit", string>>;
+type FormErrors = Partial<Record<"amount" | "name" | "phone" | "submit", string>>;
 
 interface DonationPayload {
     amount: number;
     currency: string;
     name: string;
-    email: string;
+    phone: string;
     message: string;
     anonymous: boolean;
 }
@@ -49,6 +51,7 @@ interface DonationFormProps {
     currency?: string;
     onSubmit?: (payload: DonationPayload) => Promise<void> | void;
     onClose?: () => void;
+    onStatusChange?: (isSubmitting: boolean) => void;
     className?: string;
     showWrapper?: boolean;
 }
@@ -57,6 +60,7 @@ const DonationForm = ({
     currency = "KES",
     onSubmit,
     onClose,
+    onStatusChange,
     className = "",
     showWrapper = true,
 }: DonationFormProps) => {
@@ -64,7 +68,7 @@ const DonationForm = ({
     const [isCustom, setIsCustom] = useState(false);
     const [customAmount, setCustomAmount] = useState("");
     const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
     const [message, setMessage] = useState("");
     const [anonymous, setAnonymous] = useState(false);
     const [errors, setErrors] = useState<FormErrors>({});
@@ -74,6 +78,7 @@ const DonationForm = ({
     const activeImpact = !isCustom
         ? AMOUNT_PRESETS.find((p) => p.value === selectedAmount)?.impact
         : null;
+    const isSubmitting = status === "submitting";
 
     const selectPreset = (value: number) => {
         setIsCustom(false);
@@ -90,7 +95,9 @@ const DonationForm = ({
         const next: FormErrors = {};
         if (!amount || amount <= 0) next.amount = "Enter an amount greater than 0";
         if (!anonymous && !name.trim()) next.name = "Please enter your name";
-        if (!email.trim() || !EMAIL_PATTERN.test(email)) next.email = "Enter a valid email";
+        if (!phone.trim() || !toBuniPhoneFormat(phone)) {
+            next.phone = "Enter a valid Kenyan phone number (e.g. 0712345678)";
+        }
         setErrors(next);
         return Object.keys(next).length === 0;
     };
@@ -100,11 +107,13 @@ const DonationForm = ({
         if (!validate()) return;
 
         setStatus("submitting");
+        onStatusChange?.(true);
+
         const payload: DonationPayload = {
             amount,
             currency,
             name: anonymous ? "Anonymous" : name.trim(),
-            email: email.trim(),
+            phone: phone.trim(),
             message: message.trim(),
             anonymous,
         };
@@ -120,7 +129,12 @@ const DonationForm = ({
             setStatus("success");
         } catch (err) {
             setStatus("idle");
-            setErrors((prev) => ({ ...prev, submit: "Something went wrong. Please try again." }));
+            setErrors((prev) => ({
+                ...prev,
+                submit: err instanceof Error ? err.message : "Something went wrong. Please try again.",
+            }));
+        } finally {
+            onStatusChange?.(false);
         }
     };
 
@@ -130,7 +144,7 @@ const DonationForm = ({
         setIsCustom(false);
         setCustomAmount("");
         setName("");
-        setEmail("");
+        setPhone("");
         setMessage("");
         setAnonymous(false);
         setErrors({});
@@ -140,8 +154,9 @@ const DonationForm = ({
         <button
             type="button"
             onClick={onClose}
+            disabled={isSubmitting}
             aria-label="Close"
-            className="absolute right-4 top-4 rounded-full p-1.5 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+            className="absolute right-4 top-4 rounded-full p-1.5 text-white/60 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
         >
             <X size={18} />
         </button>
@@ -169,7 +184,7 @@ const DonationForm = ({
                 </h3>
                 <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-white/80">
                     Your gift of {currency} {amount.toLocaleString()} has been recorded. A confirmation goes to{" "}
-                    {email}.
+                    {phone}.
                 </p>
                 <button
                     onClick={resetForm}
@@ -195,12 +210,12 @@ const DonationForm = ({
 
             <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-300/40 bg-emerald-300/15 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-emerald-100">
                 <Heart size={12} />
-                One-time gift
+                Gift Turning DryLands Green
             </div>
             <h2 className="mt-3 font-display text-xl leading-snug text-white">Fund the next planting season</h2>
 
             {/* Amount selection */}
-            <div className="mt-5">
+            <fieldset disabled={isSubmitting} className="mt-5 disabled:opacity-60">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-200/90">
                     Choose an amount
                 </p>
@@ -260,10 +275,10 @@ const DonationForm = ({
                         <span>{activeImpact}</span>
                     </div>
                 )}
-            </div>
+            </fieldset>
 
             {/* Donor details */}
-            <div className="mt-5 space-y-3">
+            <fieldset disabled={isSubmitting} className="mt-5 space-y-3 disabled:opacity-60">
                 <div>
                     <label className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-200/90">
                         Full name
@@ -281,16 +296,17 @@ const DonationForm = ({
 
                 <div>
                     <label className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-200/90">
-                        Email
+                        Phone
                     </label>
                     <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="jane@example.com"
+                        type="tel"
+                        inputMode="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="07--------"
                         className="mt-1.5 w-full rounded-lg border border-white/15 bg-white/[0.06] px-3 py-2 text-sm text-white placeholder:text-white/40 transition-colors focus:border-emerald-300/60 focus:outline-none"
                     />
-                    {errors.email && <p className="mt-1 text-xs text-rose-300">{errors.email}</p>}
+                    {errors.phone && <p className="mt-1 text-xs text-rose-300">{errors.phone}</p>}
                 </div>
 
                 <label className="flex cursor-pointer items-center gap-2 text-xs text-white/80">
@@ -302,19 +318,19 @@ const DonationForm = ({
                     />
                     Give anonymously
                 </label>
-            </div>
+            </fieldset>
 
             {errors.submit && <p className="mt-3 text-sm text-rose-300">{errors.submit}</p>}
 
             <button
                 type="submit"
-                disabled={status === "submitting"}
+                disabled={isSubmitting}
                 className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-emerald-300 px-5 py-2.5 text-sm font-semibold text-[#173018] transition-all duration-200 hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-60"
             >
-                {status === "submitting" ? (
+                {isSubmitting ? (
                     <>
                         <Loader2 size={16} className="animate-spin" />
-                        Processing…
+                        Waiting for confirmation…
                     </>
                 ) : (
                     <>
@@ -324,9 +340,16 @@ const DonationForm = ({
                 )}
             </button>
 
+            {isSubmitting && (
+                <p className="mt-3 text-center text-xs leading-relaxed text-emerald-100/80">
+                    Check {phone || "your phone"} — enter your M-PESA PIN to complete the gift.
+                    This can take up to a minute.
+                </p>
+            )}
+
             <div className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-white/55">
                 <ShieldCheck size={12} />
-                UI only — payments aren't wired up yet.
+                Thank you for Supporting us.
             </div>
         </form>
     );

@@ -1,41 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { CONTACT_CONTENT } from "../../data/content";
 import ScrollReveal from "../ui/ScrollReveal";
 import DonationModal from "../ui/DonationModal";
-import { User, Phone, Mail, MapPin, Send, CheckCircle, Heart } from "lucide-react";
+import { User, Phone, Mail, MapPin, Send, Heart } from "lucide-react";
 
 const Contact = () => {
   const [isDonationOpen, setIsDonationOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    organization: "",
-    email: "",
-    message: "",
-  });
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Validate inputs locally
-    if (!formData.name || !formData.email || !formData.message) return;
-
-    // Simulate submission
-    setIsSubmitted(true);
-    setTimeout(() => {
-      // Clear form after showing success
-      setFormData({
-        name: "",
-        organization: "",
-        email: "",
-        message: "",
-      });
-    }, 4000);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
 
   return (
     <section id="contact" className="bg-soil text-white py-24 px-6 relative overflow-hidden">
@@ -81,13 +51,12 @@ const Contact = () => {
                   <Heart size={16} />
                   Support with a donation
                 </button>
-                <button
-                  type="button"
-                  onClick={() => document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                  className="rounded-full border border-white/15 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-white/15"
+                <a
+                  href={`mailto:${CONTACT_CONTENT.details.email}`}
+                  className="rounded-full border border-white/15 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-white/15 inline-flex items-center"
                 >
                   Send a partnership message
-                </button>
+                </a>
               </div>
             </ScrollReveal>
 
@@ -157,106 +126,28 @@ const Contact = () => {
             </div>
           </div>
 
-          {/* Right Column: Interactive Contact Form */}
+          {/* Right Column: Contact via mailto */}
           <div className="lg:col-span-6 flex items-center">
             <ScrollReveal direction="left" delay={0.3} className="w-full">
               <div id="contact-form" className="bg-[#1A1208] border border-white/10 rounded-2xl p-8 md:p-10 shadow-2xl relative">
 
-                {isSubmitted ? (
-                  <div className="flex flex-col items-center justify-center text-center gap-6 py-12 animate-fade-in">
-                    <div className="w-16 h-16 rounded-full bg-sage/20 border border-sage flex items-center justify-center text-sage">
-                      <CheckCircle size={40} />
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <h3 className="font-display text-2xl font-bold text-white">Thank You!</h3>
-                      <p className="font-sans text-white/75 text-sm md:text-base max-w-sm">
-                        Your partnership inquiry has been submitted. Our team leader will get back to you shortly.
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                    <h3 className="font-display text-2xl font-semibold text-white mb-2">
-                      Send a Message
-                    </h3>
+                <div className="flex flex-col gap-6">
+                  <h3 className="font-display text-2xl font-semibold text-white mb-2">
+                    Send a Message
+                  </h3>
 
-                    {/* Name input */}
-                    <div className="flex flex-col gap-2">
-                      <label htmlFor="name" className="font-sans text-xs font-semibold text-white/60 uppercase tracking-wider">
-                        Full Name *
-                      </label>
-                      <input
-                        id="name"
-                        name="name"
-                        type="text"
-                        required
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        placeholder="John Doe"
-                        className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-sage focus:ring-1 focus:ring-sage transition-all duration-200"
-                      />
-                    </div>
+                  <p className="font-sans text-white/75 text-sm md:text-base">
+                    Interested in partnering with TDG Initiative? Reach out directly and our team will get back to you shortly.
+                  </p>
 
-                    {/* Organisation input */}
-                    <div className="flex flex-col gap-2">
-                      <label htmlFor="organization" className="font-sans text-xs font-semibold text-white/60 uppercase tracking-wider">
-                        Organisation
-                      </label>
-                      <input
-                        id="organization"
-                        name="organization"
-                        type="text"
-                        value={formData.organization}
-                        onChange={handleInputChange}
-                        placeholder="NGO, Company, or Institution"
-                        className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-sage focus:ring-1 focus:ring-sage transition-all duration-200"
-                      />
-                    </div>
-
-                    {/* Email input */}
-                    <div className="flex flex-col gap-2">
-                      <label htmlFor="email" className="font-sans text-xs font-semibold text-white/60 uppercase tracking-wider">
-                        Email Address *
-                      </label>
-                      <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        required
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder="john@example.com"
-                        className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-sage focus:ring-1 focus:ring-sage transition-all duration-200"
-                      />
-                    </div>
-
-                    {/* Message input */}
-                    <div className="flex flex-col gap-2">
-                      <label htmlFor="message" className="font-sans text-xs font-semibold text-white/60 uppercase tracking-wider">
-                        Your Message *
-                      </label>
-                      <textarea
-                        id="message"
-                        name="message"
-                        rows={4}
-                        required
-                        value={formData.message}
-                        onChange={handleInputChange}
-                        placeholder="How would you like to collaborate with TDG Foundation?"
-                        className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-sage focus:ring-1 focus:ring-sage transition-all duration-200 resize-none"
-                      />
-                    </div>
-
-                    {/* Submit Button */}
-                    <button
-                      type="submit"
-                      className="font-sans font-semibold tracking-wider text-soil bg-sage px-6 py-4 rounded-lg hover:bg-sage/90 transition-all duration-300 flex items-center justify-center gap-2 mt-2 shadow-lg shadow-sage/10"
-                    >
-                      <Send size={16} />
-                      Submit Inquiry
-                    </button>
-                  </form>
-                )}
+                  <a
+                    href={`mailto:${CONTACT_CONTENT.details.email}?subject=Partnership%20Inquiry&body=Hi%20TDG%20Initiative%20team%2C%0A%0AI'd%20like%20to%20discuss%20a%20potential%20partnership.%0A%0AOrganisation%3A%20%0AMessage%3A%20`}
+                    className="font-sans font-semibold tracking-wider text-soil bg-sage px-6 py-4 rounded-lg hover:bg-sage/90 transition-all duration-300 flex items-center justify-center gap-2 mt-2 shadow-lg shadow-sage/10"
+                  >
+                    <Send size={16} />
+                    Email Us
+                  </a>
+                </div>
 
               </div>
             </ScrollReveal>
