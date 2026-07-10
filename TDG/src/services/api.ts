@@ -19,6 +19,7 @@ export interface ProblemImageDTO {
 export interface ProjectDTO {
   id: number;
   title: string;
+  shortDescription: string;
   description: string;
   status: "ONGOING" | "COMPLETED";
   location: string;
@@ -116,6 +117,7 @@ export async function fetchProjects(): Promise<ProjectDTO[]> {
  */
 export async function createProject(data: {
   title: string;
+  shortDescription: string;
   description: string;
   status: "ONGOING" | "COMPLETED";
   location: string;
@@ -128,6 +130,7 @@ export async function createProject(data: {
 }): Promise<void> {
   const form = new FormData();
   form.append("title", data.title);
+  form.append("shortDescription", data.shortDescription);
   form.append("description", data.description);
   form.append("status", data.status);
   form.append("location", data.location);
@@ -219,6 +222,7 @@ export async function updateProject(
   data: {
     title?: string;
     description?: string;
+    shortDescription?: string;
     status?: "ONGOING" | "COMPLETED";
     location?: string;
     county?: string;
@@ -231,6 +235,7 @@ export async function updateProject(
 ): Promise<void> {
   const form = new FormData();
   if (data.title !== undefined) form.append("title", data.title);
+  if (data.shortDescription !== undefined) form.append("shortDescription", data.shortDescription);
   if (data.description !== undefined) form.append("description", data.description);
   if (data.status !== undefined) form.append("status", data.status);
   if (data.location !== undefined) form.append("location", data.location);
@@ -327,4 +332,10 @@ export async function pollTransactionStatus(
     await new Promise((r) => setTimeout(r, intervalMs));
   }
   throw new Error("Payment confirmation timed out. Check your phone or try again.");
+}
+
+export async function fetchProjectById(id: string) {
+  const res = await axios.get<ProjectDTO>(`${BASE_URL}/api/projects/${id}`);
+  return res.data;
+
 }

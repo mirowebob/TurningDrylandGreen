@@ -11,6 +11,7 @@ import Outcomes from './components/sections/Outcomes';
 import Collaborators from './components/sections/Collaborators';
 import Contact from './components/sections/Contact';
 import ProjectsPage from './components/pages/ProjectsPage';
+import ProjectDetailPage from './components/pages/ProjectDetailPage'; // Import the new component
 import AdminDashboardPage from './components/pages/AdminDashboardPage';
 import AdminProblemImagesPage from './components/pages/AdminProblemImagesPage';
 import AdminContentPage from './components/pages/AdminContentPage';
@@ -41,6 +42,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/projects" element={<ProjectsPage />} />
+        <Route path="/projects/:id" element={<ProjectDetailPage />} /> {/* New route */}
         <Route path="/admin" element={<AdminDashboardPage />} />
         <Route path="/admin/problem-images" element={<AdminProblemImagesPage />} />
         <Route path="/admin/content" element={<AdminContentPage />} />

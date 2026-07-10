@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Link } from "react-router-dom";
 import {
     ArrowRight,
     CheckCircle2,
@@ -15,6 +16,8 @@ import {
     TrendingUp,
     ArrowUpRight,
     Calendar,
+    Filter,
+    Star,
 } from "lucide-react";
 import Navbar from "../layout/Navbar";
 import Footer from "../layout/Footer";
@@ -92,7 +95,7 @@ const AnimatedNumber = ({ value }: { value: number }) => {
             },
             { threshold: 0.5 }
         );
-        observer.observe(node);
+        observer.observe(ref.current);
         return () => observer.disconnect();
     }, [value]);
 
@@ -160,6 +163,11 @@ const ProjectsPage = () => {
         return projectWithImage?.images?.[0] || marigat;
     }, [projects]);
 
+    // Featured projects for the hero section (first 3 or all if less)
+    const featuredProjects = useMemo(() => {
+        return allProjects.slice(0, 3);
+    }, [allProjects]);
+
     return (
         <>
             <div className="min-h-screen bg-[#060b07] text-white">
@@ -171,107 +179,121 @@ const ProjectsPage = () => {
                     .float-anim { animation: float 6s ease-in-out infinite; }
                     .no-scrollbar { scrollbar-width: none; }
                     .no-scrollbar::-webkit-scrollbar { display: none; }
+                    .card-hover {
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    }
+                    .card-hover:hover {
+                        transform: translateY(-8px);
+                        box-shadow: 0 20px 40px -12px rgba(16, 185, 129, 0.3);
+                    }
                     @media (prefers-reduced-motion: reduce) {
                         .float-anim { animation: none !important; }
+                        .card-hover:hover { transform: none !important; }
                     }
                 `}</style>
 
                 <Navbar />
 
-                {/* ===== HERO ===== */}
-                <section className="relative px-6 pt-32 pb-16 md:px-8 lg:px-12">
-                    <div className="absolute inset-0 overflow-hidden">
-                        <div className="absolute top-20 left-10 w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[120px]" />
-                        <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-emerald-400/5 rounded-full blur-[120px]" />
+                {/* ===== HERO SECTION ===== */}
+                <section className="relative px-6 pt-32 pb-20 md:px-8 lg:px-12 overflow-hidden">
+                    {/* Background decorations */}
+                    <div className="absolute inset-0">
+                        <div className="absolute top-20 left-10 w-[600px] h-[600px] bg-emerald-600/10 rounded-full blur-[140px]" />
+                        <div className="absolute bottom-20 right-10 w-[400px] h-[400px] bg-emerald-400/5 rounded-full blur-[120px]" />
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emerald-500/5 rounded-full blur-[150px]" />
                     </div>
 
                     <div className="relative mx-auto max-w-7xl">
                         <Reveal>
-                            <div className="grid lg:grid-cols-2 gap-12 items-center">
-                                <div className="space-y-8">
-                                    <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-300">
-                                        <Leaf size={16} />
-                                        {PROJECTS_CONTENT.hero.eyebrow}
-                                    </div>
-
-                                    <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight">
-                                        Turning
-                                        <span className="block text-emerald-400">Drylands Green</span>
-                                    </h1>
-
-                                    <p className="text-lg text-white/60 max-w-lg leading-relaxed">
-                                        {PROJECTS_CONTENT.hero.description}
-                                    </p>
-
-                                    <div className="flex flex-wrap gap-4">
-                                        <button
-                                            onClick={() => setIsDonationOpen(true)}
-                                            className="group inline-flex items-center gap-3 rounded-full bg-emerald-500 px-8 py-4 font-semibold text-white transition-all hover:bg-emerald-400 hover:shadow-xl hover:shadow-emerald-500/20 hover:-translate-y-0.5"
-                                        >
-                                            <Heart size={20} className="group-hover:scale-110 transition-transform" />
-                                            Support Our Work
-                                        </button>
-                                    </div>
+                            <div className="text-center max-w-4xl mx-auto mb-16">
+                                <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-500/10 px-5 py-2.5 text-sm font-medium text-emerald-300 mb-6">
+                                    <Sparkles size={16} />
+                                    {PROJECTS_CONTENT.hero.eyebrow || "Restoring Hope, One Project at a Time"}
                                 </div>
 
-                                <div className="relative">
-                                    <div className="relative overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
-                                        <img
-                                            src={heroImage}
-                                            alt="Restoration work"
-                                            className="w-full h-[400px] lg:h-[500px] object-cover"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                                        <div className="absolute bottom-6 left-6 flex items-center gap-2 rounded-full bg-black/40 backdrop-blur-md px-4 py-2 text-sm border border-white/10">
-                                            <MapPin size={14} className="text-emerald-400" />
-                                            <span>Kenya</span>
-                                        </div>
-                                    </div>
-                                    <div className="absolute -bottom-6 -left-6 float-anim hidden lg:block">
-                                        <div className="rounded-2xl border border-white/10 bg-black/80 backdrop-blur-xl p-4 shadow-2xl">
-                                            <div className="flex items-center gap-3">
-                                                <div className="h-10 w-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-                                                    <Target size={18} className="text-emerald-400" />
-                                                </div>
-                                                <div>
-                                                    <div className="text-2xl font-bold">
-                                                        <AnimatedNumber value={stats.projects} />
-                                                    </div>
-                                                    <div className="text-xs text-white/50">Active Projects</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <h1 className="text-5xl md:text-7xl font-bold leading-tight tracking-tight mb-6">
+                                    Turning
+                                    <span className="block text-emerald-400">Drylands Green</span>
+                                </h1>
+
+                                <p className="text-xl text-white/60 max-w-2xl mx-auto leading-relaxed">
+                                    {PROJECTS_CONTENT.hero.description || "Explore our transformative projects restoring ecosystems and empowering communities across Kenya."}
+                                </p>
                             </div>
                         </Reveal>
-                    </div>
-                </section>
 
-                {/* ===== QUICK STATS ===== */}
-                <section className="px-6 pb-8 md:px-8 lg:px-12">
-                    <div className="mx-auto max-w-7xl">
+                        {/* Featured Projects Grid - 3 Cards */}
+                        {!isLoading && featuredProjects.length > 0 && (
+                            <Reveal>
+                                <div className="grid md:grid-cols-3 gap-6 mb-16">
+                                    {featuredProjects.map((project, index) => (
+                                        <div
+                                            key={project.id}
+                                            className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm card-hover"
+                                        >
+                                            <div className="aspect-[4/3] overflow-hidden">
+                                                <img
+                                                    src={project.images?.[0] || getImage(index)}
+                                                    alt={project.title}
+                                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                />
+                                            </div>
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                                            <div className="absolute bottom-0 left-0 right-0 p-6">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <span className={`text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full ${project.type === "ongoing"
+                                                        ? "bg-amber-500/20 text-amber-300 border border-amber-400/20"
+                                                        : "bg-emerald-500/20 text-emerald-300 border border-emerald-400/20"
+                                                        }`}>
+                                                        {project.type === "ongoing" ? "In Progress" : "Completed"}
+                                                    </span>
+                                                    <span className="text-xs text-white/40 flex items-center gap-1">
+                                                        <MapPin size={12} />
+                                                        {project.location}
+                                                    </span>
+                                                </div>
+                                                <h3 className="text-xl font-bold text-white group-hover:text-emerald-200 transition-colors">
+                                                    {project.title}
+                                                </h3>
+                                                <p className="text-sm text-white/60 line-clamp-2 mt-1">
+                                                    {project.description}
+                                                </p>
+                                                <Link
+                                                    to={`/projects/${project.id}`}
+                                                    className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-emerald-400 hover:text-emerald-300 transition-all hover:gap-3"
+                                                >
+                                                    Learn More <ArrowRight size={14} />
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </Reveal>
+                        )}
+
+                        {/* Stats Row */}
                         <Reveal>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 border-t border-white/5 pt-12">
                                 {[
                                     { label: "Total Projects", value: stats.projects, icon: Target },
-                                    { label: "Counties Reached", value: stats.counties, icon: MapPin },
+                                    { label: "Counties", value: stats.counties, icon: MapPin },
                                     { label: "Communities", value: stats.communities, icon: Users },
+                                    { label: "Ongoing", value: stats.ongoing, icon: TrendingUp },
                                     { label: "Completed", value: stats.completed, icon: CheckCircle2 },
                                 ].map((stat) => (
                                     <div
                                         key={stat.label}
-                                        className="group rounded-2xl border border-white/5 bg-white/5 p-6 hover:bg-white/10 transition-all hover:-translate-y-1"
+                                        className="text-center group"
                                     >
-                                        <stat.icon size={20} className="text-emerald-400 mb-4" />
-                                        <div className="text-3xl font-bold">
+                                        <stat.icon size={20} className="text-emerald-400 mx-auto mb-2 group-hover:scale-110 transition-transform" />
+                                        <div className="text-2xl font-bold text-white/90">
                                             {isLoading ? (
-                                                <Loader2 size={24} className="animate-spin text-white/30" />
+                                                <Loader2 size={20} className="animate-spin text-white/30 mx-auto" />
                                             ) : (
                                                 <AnimatedNumber value={stat.value} />
                                             )}
                                         </div>
-                                        <div className="text-sm text-white/40 mt-1">{stat.label}</div>
+                                        <div className="text-xs text-white/40 mt-1 uppercase tracking-wider">{stat.label}</div>
                                     </div>
                                 ))}
                             </div>
@@ -279,33 +301,35 @@ const ProjectsPage = () => {
                     </div>
                 </section>
 
-                {/* ===== FILTER BAR ===== */}
-                <section className="px-6 pb-12 md:px-8 lg:px-12 sticky top-20 z-30">
+                {/* ===== FILTER & SORT BAR ===== */}
+                <section className="px-6 pb-8 md:px-8 lg:px-12 sticky top-20 z-30">
                     <div className="mx-auto max-w-7xl">
                         <Reveal>
                             <div className="rounded-2xl border border-white/10 bg-black/80 backdrop-blur-xl p-4">
                                 <div className="flex flex-col md:flex-row gap-4 md:items-center justify-between">
-                                    {/* Status Filter */}
-                                    <div className="flex gap-2 rounded-xl bg-white/5 p-1.5">
-                                        {[
-                                            { key: "all", label: "All Projects" },
-                                            { key: "ongoing", label: "Ongoing" },
-                                            { key: "completed", label: "Completed" },
-                                        ].map((tab) => (
-                                            <button
-                                                key={tab.key}
-                                                onClick={() => setStatusFilter(tab.key)}
-                                                className={`rounded-lg px-5 py-2.5 text-sm font-medium transition-all ${statusFilter === tab.key
-                                                    ? "bg-emerald-500 text-white shadow-lg"
-                                                    : "text-white/50 hover:text-white hover:bg-white/5"
-                                                    }`}
-                                            >
-                                                {tab.label}
-                                            </button>
-                                        ))}
+                                    <div className="flex items-center gap-4">
+                                        <Filter size={18} className="text-white/40" />
+                                        <span className="text-sm text-white/40 font-medium">Sort By:</span>
+                                        <div className="flex gap-2 rounded-xl bg-white/5 p-1.5">
+                                            {[
+                                                { key: "all", label: "All" },
+                                                { key: "ongoing", label: "Ongoing" },
+                                                { key: "completed", label: "Completed" },
+                                            ].map((tab) => (
+                                                <button
+                                                    key={tab.key}
+                                                    onClick={() => setStatusFilter(tab.key)}
+                                                    className={`rounded-lg px-5 py-2.5 text-sm font-medium transition-all ${statusFilter === tab.key
+                                                        ? "bg-emerald-500 text-white shadow-lg"
+                                                        : "text-white/50 hover:text-white hover:bg-white/5"
+                                                        }`}
+                                                >
+                                                    {tab.label}
+                                                </button>
+                                            ))}
+                                        </div>
                                     </div>
 
-                                    {/* Location Filter */}
                                     <div className="flex items-center gap-3 flex-wrap">
                                         <span className="text-sm text-white/40 flex items-center gap-2">
                                             <MapPin size={14} className="text-emerald-400" />
@@ -320,19 +344,21 @@ const ProjectsPage = () => {
                                                 Clear
                                             </button>
                                         )}
-                                        {locations.map(([loc, count]) => (
-                                            <button
-                                                key={loc}
-                                                onClick={() => setLocationFilter(locationFilter === loc ? null : loc)}
-                                                className={`rounded-full px-4 py-1.5 text-sm transition-all ${locationFilter === loc
-                                                    ? "bg-emerald-500/90 text-white"
-                                                    : "text-white/50 hover:text-white hover:bg-white/5"
-                                                    }`}
-                                            >
-                                                {loc}
-                                                <span className="ml-1.5 text-xs opacity-60">{count}</span>
-                                            </button>
-                                        ))}
+                                        <div className="flex gap-2 overflow-x-auto no-scrollbar">
+                                            {locations.map(([loc, count]) => (
+                                                <button
+                                                    key={loc}
+                                                    onClick={() => setLocationFilter(locationFilter === loc ? null : loc)}
+                                                    className={`whitespace-nowrap rounded-full px-4 py-1.5 text-sm transition-all ${locationFilter === loc
+                                                        ? "bg-emerald-500/90 text-white"
+                                                        : "text-white/50 hover:text-white hover:bg-white/5"
+                                                        }`}
+                                                >
+                                                    {loc}
+                                                    <span className="ml-1.5 text-xs opacity-60">{count}</span>
+                                                </button>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -340,10 +366,9 @@ const ProjectsPage = () => {
                     </div>
                 </section>
 
-                {/* ===== PROJECTS - MAIN DISPLAY ===== */}
-                <section className="px-6 pb-16 md:px-8 lg:px-12">
+                {/* ===== ALL PROJECTS GRID ===== */}
+                <section className="px-6 pb-20 md:px-8 lg:px-12">
                     <div className="mx-auto max-w-7xl">
-                        {/* Section Header */}
                         <Reveal className="mb-12">
                             <div className="flex items-center gap-3">
                                 <Sparkles size={24} className="text-amber-400" />
@@ -358,14 +383,12 @@ const ProjectsPage = () => {
                             </div>
                         </Reveal>
 
-                        {/* Loading State */}
                         {isLoading && (
                             <div className="flex justify-center py-20">
                                 <Loader2 size={40} className="animate-spin text-emerald-400" />
                             </div>
                         )}
 
-                        {/* Empty State */}
                         {!isLoading && filtered.length === 0 && (
                             <Reveal>
                                 <div className="text-center py-20">
@@ -376,130 +399,73 @@ const ProjectsPage = () => {
                             </Reveal>
                         )}
 
-                        {/* Project Cards - Large Display */}
                         {!isLoading && filtered.length > 0 && (
-                            <div className="space-y-12">
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {filtered.map((project, i) => {
                                     const isOngoing = project.type === "ongoing";
                                     const image = project.images?.[0] || getImage(i);
-                                    const isEven = i % 2 === 0;
 
                                     return (
                                         <Reveal key={project.id}>
-                                            <article className={`grid lg:grid-cols-2 gap-8 lg:gap-16 items-center ${!isEven ? "lg:[&>*:first-child]:order-2" : ""
-                                                }`}>
-                                                {/* Image Side */}
-                                                <div className="relative overflow-hidden rounded-3xl border border-white/10 shadow-2xl group">
-                                                    <div className="aspect-[4/3] overflow-hidden">
-                                                        <img
-                                                            src={image}
-                                                            alt={project.title}
-                                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                                        />
-                                                    </div>
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                                            <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm card-hover h-full flex flex-col">
+                                                <div className="aspect-[4/3] overflow-hidden relative">
+                                                    <img
+                                                        src={image}
+                                                        alt={project.title}
+                                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                    />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
                                                     {/* Status Badge */}
-                                                    <div className={`absolute top-6 right-6 flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold backdrop-blur-md ${isOngoing
-                                                        ? "border-amber-400/40 bg-black/50 text-amber-200"
-                                                        : "border-emerald-400/40 bg-black/50 text-emerald-200"
-                                                        }`}>
-                                                        {isOngoing && <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />}
-                                                        {isOngoing ? "In Progress" : "Completed"}
-                                                    </div>
-
-                                                    {/* Location & Community */}
-                                                    <div className="absolute bottom-6 left-6 flex flex-wrap gap-3">
-                                                        <div className="flex items-center gap-2 rounded-full bg-black/60 backdrop-blur-md px-4 py-2 text-sm text-white/90 border border-white/10">
-                                                            <MapPin size={14} className="text-emerald-400" />
-                                                            {project.location}, {project.county}
-                                                        </div>
-                                                        {project.communityName && (
-                                                            <div className="flex items-center gap-2 rounded-full bg-emerald-500/20 backdrop-blur-md px-4 py-2 text-sm text-emerald-200 border border-emerald-400/20">
-                                                                <Users size={14} />
-                                                                {project.communityName}
-                                                            </div>
-                                                        )}
+                                                    <div className="absolute top-4 right-4">
+                                                        <span className={`text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full backdrop-blur-md ${isOngoing
+                                                            ? "bg-amber-500/30 text-amber-200 border border-amber-400/30"
+                                                            : "bg-emerald-500/30 text-emerald-200 border border-emerald-400/30"
+                                                            }`}>
+                                                            {isOngoing ? "In Progress" : "Completed"}
+                                                        </span>
                                                     </div>
                                                 </div>
 
-                                                {/* Content Side */}
-                                                <div className="space-y-6">
-                                                    {/* Project Number */}
-                                                    <div className="flex items-center gap-4">
-                                                        <span className="text-5xl font-bold text-white/10">
-                                                            {String(i + 1).padStart(2, "0")}
-                                                        </span>
-                                                        <div>
-                                                            <span className={`text-xs font-semibold uppercase tracking-[0.3em] ${isOngoing ? "text-amber-400" : "text-emerald-400"
-                                                                }`}>
-                                                                {isOngoing ? "Ongoing Initiative" : "Completed Project"}
-                                                            </span>
-                                                        </div>
+                                                <div className="p-6 flex flex-col flex-grow">
+                                                    <div className="flex items-center gap-2 text-sm text-white/40 mb-2">
+                                                        <MapPin size={14} className="text-emerald-400" />
+                                                        {project.location}
+                                                        {project.county && `, ${project.county}`}
                                                     </div>
 
-                                                    {/* Title */}
-                                                    <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight group-hover:text-emerald-200 transition-colors">
+                                                    <h3 className="text-xl font-bold text-white group-hover:text-emerald-200 transition-colors mb-2">
                                                         {project.title}
                                                     </h3>
 
-                                                    {/* Description */}
-                                                    <p className="text-lg leading-relaxed text-white/70">
+                                                    <p className="text-sm text-white/60 line-clamp-3 flex-grow">
                                                         {project.description}
                                                     </p>
 
-                                                    {/* Tags */}
                                                     {project.tags && project.tags.length > 0 && (
-                                                        <div className="flex flex-wrap gap-2">
-                                                            {project.tags.map((tag) => (
+                                                        <div className="flex flex-wrap gap-1.5 mt-4">
+                                                            {project.tags.slice(0, 3).map((tag) => (
                                                                 <span
                                                                     key={tag}
-                                                                    className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/60 hover:border-white/20 hover:text-white/80 transition-all cursor-default"
+                                                                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/40"
                                                                 >
                                                                     {tag}
                                                                 </span>
                                                             ))}
+                                                            {project.tags.length > 3 && (
+                                                                <span className="text-xs text-white/30">+{project.tags.length - 3}</span>
+                                                            )}
                                                         </div>
                                                     )}
 
-                                                    {/* Impact / Outcome */}
-                                                    <div className={`rounded-2xl border p-6 ${isOngoing
-                                                        ? "border-amber-400/20 bg-amber-500/5"
-                                                        : "border-emerald-400/20 bg-emerald-500/5"
-                                                        }`}>
-                                                        <div className="flex items-center gap-2 mb-3">
-                                                            {isOngoing ? (
-                                                                <TrendingUp size={20} className="text-amber-400" />
-                                                            ) : (
-                                                                <CheckCircle2 size={20} className="text-emerald-400" />
-                                                            )}
-                                                            <span className={`font-semibold ${isOngoing ? "text-amber-300" : "text-emerald-300"
-                                                                }`}>
-                                                                {isOngoing ? "Expected Impact" : "Outcome Achieved"}
-                                                            </span>
-                                                        </div>
-                                                        <p className={`leading-relaxed ${isOngoing ? "text-amber-100/80" : "text-emerald-100/80"
-                                                            }`}>
-                                                            {isOngoing ? project.impact : project.outcome}
-                                                        </p>
-                                                    </div>
-
-                                                    {/* Action Link */}
-                                                    <button
-                                                        onClick={() => setIsDonationOpen(true)}
-                                                        className={`inline-flex items-center gap-2 font-semibold transition-all hover:gap-3 ${isOngoing ? "text-amber-400 hover:text-amber-300" : "text-emerald-400 hover:text-emerald-300"
-                                                            }`}
+                                                    <Link
+                                                        to={`/projects/${project.id}`}
+                                                        className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-emerald-400 hover:text-emerald-300 transition-all hover:gap-3"
                                                     >
-                                                        <span>Support this project</span>
-                                                        <ArrowRight size={18} />
-                                                    </button>
+                                                        Learn More <ArrowRight size={14} />
+                                                    </Link>
                                                 </div>
-                                            </article>
-
-                                            {/* Divider */}
-                                            {i < filtered.length - 1 && (
-                                                <div className="mt-12 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                                            )}
+                                            </div>
                                         </Reveal>
                                     );
                                 })}
@@ -514,12 +480,12 @@ const ProjectsPage = () => {
                         <Reveal className="mb-12">
                             <div className="text-center">
                                 <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/20 bg-amber-500/10 px-4 py-2 text-sm text-amber-300 mb-6">
-                                    <Users size={16} />
-                                    Community Voices
+                                    <Star size={16} />
+                                    Hear from Our Communities
                                 </div>
-                                <h2 className="text-3xl md:text-4xl font-bold mb-4">Stories of Change</h2>
+                                <h2 className="text-3xl md:text-4xl font-bold mb-4">Stories of Transformation</h2>
                                 <p className="text-white/50 max-w-lg mx-auto">
-                                    Hear directly from the communities we work with
+                                    Discover how restoration is changing lives and landscapes
                                 </p>
                             </div>
                         </Reveal>
@@ -534,14 +500,14 @@ const ProjectsPage = () => {
                                 {testimonials.map((t) => (
                                     <div
                                         key={t.id}
-                                        className="w-[350px] shrink-0 snap-start rounded-2xl border border-white/5 bg-white/5 p-8 hover:border-amber-500/20 hover:bg-white/10 transition-all"
+                                        className="w-[350px] shrink-0 snap-start rounded-2xl border border-white/5 bg-white/5 p-8 hover:border-emerald-500/20 hover:bg-white/10 transition-all"
                                     >
-                                        <Quote size={40} className="text-amber-500/20 mb-6" />
+                                        <Quote size={40} className="text-emerald-500/20 mb-6" />
                                         <p className="text-white/80 text-lg leading-relaxed mb-6">
                                             "{t.message}"
                                         </p>
                                         <div className="flex items-center gap-4 border-t border-white/5 pt-6">
-                                            <div className="h-12 w-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 font-bold text-lg">
+                                            <div className="h-12 w-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 font-bold text-lg">
                                                 {t.name.charAt(0)}
                                             </div>
                                             <div>
@@ -553,24 +519,16 @@ const ProjectsPage = () => {
                                 ))}
                             </div>
                         )}
-
-                        <Reveal>
-                            <div className="mt-10 text-center">
-                                <div className="inline-flex items-center gap-2 text-emerald-400 text-sm">
-                                    <Sprout size={16} />
-                                    Every story starts with a seed of hope
-                                </div>
-                            </div>
-                        </Reveal>
                     </div>
                 </section>
 
-                {/* ===== CTA ===== */}
+                {/* ===== FINAL CTA ===== */}
                 <section className="px-6 pb-20 md:px-8 lg:px-12">
                     <div className="mx-auto max-w-7xl">
                         <Reveal>
                             <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-900/50 to-emerald-800/30 border border-emerald-500/20 p-12 md:p-16 text-center">
                                 <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                                <div className="absolute bottom-0 left-0 w-80 h-80 bg-emerald-400/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
                                 <div className="relative">
                                     <Heart size={48} className="text-emerald-400 mx-auto mb-6" />
                                     <h3 className="text-3xl md:text-5xl font-bold mb-4">Be Part of the Change</h3>

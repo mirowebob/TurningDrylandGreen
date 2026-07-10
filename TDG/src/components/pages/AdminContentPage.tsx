@@ -40,6 +40,7 @@ const AdminContentPage = () => {
 
     // Project Form State
     const [projectTitle, setProjectTitle] = useState("");
+    const [shortDesc, setShortDesc] = useState("");
     const [projectDesc, setProjectDesc] = useState("");
     const [projectStatus, setProjectStatus] = useState<"ONGOING" | "COMPLETED">("ONGOING");
     const [projectLocation, setProjectLocation] = useState("");
@@ -169,6 +170,7 @@ const AdminContentPage = () => {
             if (editingProjectId !== null) {
                 await updateProject(editingProjectId, {
                     title: projectTitle.trim(),
+                    shortDescription: shortDesc.trim(),
                     description: projectDesc.trim(),
                     status: projectStatus,
                     location: projectLocation.trim(),
@@ -184,6 +186,7 @@ const AdminContentPage = () => {
             } else {
                 await createProject({
                     title: projectTitle.trim(),
+                    shortDescription: shortDesc.trim(),
                     description: projectDesc.trim(),
                     status: projectStatus,
                     location: projectLocation.trim(),
@@ -198,6 +201,7 @@ const AdminContentPage = () => {
             }
 
             setProjectTitle("");
+            setShortDesc("");
             setProjectDesc("");
             setProjectLocation("");
             setProjectCounty("");
@@ -490,6 +494,17 @@ const AdminContentPage = () => {
                                     </label>
                                 </div>
 
+
+                                <label className="block text-sm text-white/80">
+                                    <span className="mb-2 block">Short Description *</span>
+                                    <textarea
+                                        value={projectDesc}
+                                        onChange={(e) => setShortDesc(e.target.value)}
+                                        rows={4}
+                                        className="w-full rounded-xl border border-white/10 bg-[#0e1b14] px-4 py-3 text-white outline-none ring-0 focus:border-amber-400/50 transition-all resize-none"
+                                        placeholder="Share detailed description of the project."
+                                    />
+                                </label>
                                 <label className="block text-sm text-white/80">
                                     <span className="mb-2 block">Description *</span>
                                     <textarea
@@ -606,6 +621,7 @@ const AdminContentPage = () => {
                                             type="button"
                                             onClick={() => {
                                                 setProjectTitle("");
+                                                setShortDesc("");
                                                 setProjectDesc("");
                                                 setProjectLocation("");
                                                 setProjectCounty("");
@@ -660,6 +676,7 @@ const AdminContentPage = () => {
                                                         onClick={() => {
                                                             setEditingProjectId(project.id);
                                                             setProjectTitle(project.title);
+                                                            setShortDesc(project.shortDescription)
                                                             setProjectDesc(project.description);
                                                             setProjectStatus(project.status);
                                                             setProjectLocation(project.location);
