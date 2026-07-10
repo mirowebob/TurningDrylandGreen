@@ -12,6 +12,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
+import reactor.util.retry.Retry;
+
+import java.time.Duration;
 
 @Service
 @Slf4j
@@ -43,6 +47,8 @@ public class BuniPaymentService {
                 .bodyValue(payload)
                 .retrieve()
                 .bodyToMono(StkPushResponse.class)
+                .retryWhen(Retry.backoff(2, Duration.ofMillis(500))
+                        .filter(ex ->ex instanceof WebClientRequestException))
                 .block();
 
         if (response != null && response != null) {

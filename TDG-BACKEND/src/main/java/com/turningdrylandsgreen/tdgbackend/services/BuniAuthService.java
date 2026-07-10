@@ -7,8 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
+import reactor.util.retry.Retry;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.concurrent.locks.ReentrantLock;
@@ -53,6 +56,8 @@ public class BuniAuthService {
                 .header(HttpHeaders.AUTHORIZATION, "Basic " +basicAuth)
                 .retrieve()
                 .bodyToMono(TokenResponse.class)
+                .retryWhen(Retry.backoff(2, Duration.ofMillis(500))
+                        .filter(ex ->ex instanceof WebClientRequestException))
                 .block();
 
         if(response == null || response.accessToken() == null){
