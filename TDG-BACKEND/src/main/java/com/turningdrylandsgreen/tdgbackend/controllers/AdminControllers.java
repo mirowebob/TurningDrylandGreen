@@ -65,11 +65,7 @@ public class AdminControllers {
         return new ResponseEntity<>(adminServices.getAllProjects(), HttpStatus.OK);
     }
 
-    @GetMapping("/projects/{id}")
-    @Operation(summary = "endpoint to get project by id")
-    public ResponseEntity<Projects> getProjectById(@PathVariable int id) {
-        return new ResponseEntity<>(adminServices.getProjectById(id), HttpStatus.OK);
-    }
+
 
     @PutMapping(value = "/projects/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "endpoint to update a project")

@@ -71,6 +71,7 @@ public class AdminServices {
             Projects project = Projects.builder()
                     .title(projectsCreationDTO.getTitle())
                     .location(projectsCreationDTO.getLocation())
+                    .shortDescription(projectsCreationDTO.getShortDescription())
                     .description(projectsCreationDTO.getDescription())
                     .images(urls)
                     .county(projectsCreationDTO.getCounty())

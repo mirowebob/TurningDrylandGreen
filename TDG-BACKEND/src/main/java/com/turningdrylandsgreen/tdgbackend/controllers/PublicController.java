@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,5 +50,11 @@ public class PublicController {
     public ResponseEntity<List<AdminProfiles>> getAllProfiles() {
         log.info("fetching profiles");
         return new ResponseEntity<>(adminServices.getAllProfiles(), HttpStatus.OK);
+    }
+
+    @GetMapping("/projects/{id}")
+    @Operation(summary = "endpoint to get project by id")
+    public ResponseEntity<Projects> getProjectById(@PathVariable int id) {
+        return new ResponseEntity<>(adminServices.getProjectById(id), HttpStatus.OK);
     }
 }

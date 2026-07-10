@@ -13,6 +13,7 @@ import java.util.List;
 @Data
 public class ProjectsCreationDTO {
     private String title;
+    private String shortDescription;
     private String description;
     private String status;
     private String location;

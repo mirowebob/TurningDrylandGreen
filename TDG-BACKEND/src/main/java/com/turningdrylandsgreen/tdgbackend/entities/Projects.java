@@ -21,7 +21,10 @@ public class Projects {
 
     private String title;
 
-    @Column(length = 5000)
+    @Column(length = 1000)
+    private String shortDescription;
+
+    @Column(length = 10000)
     private String description;
 
     @Enumerated(EnumType.STRING)

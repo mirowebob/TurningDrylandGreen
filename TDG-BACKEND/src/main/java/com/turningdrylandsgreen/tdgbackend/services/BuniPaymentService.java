@@ -16,6 +16,7 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 import reactor.util.retry.Retry;
 
 import java.time.Duration;
+import java.time.Instant;
 
 @Service
 @Slf4j
@@ -51,9 +52,13 @@ public class BuniPaymentService {
                         .filter(ex ->ex instanceof WebClientRequestException))
                 .block();
 
+        assert response != null;
+        log.info("StkPushResponse {}", response.response());
+
         if (response != null && response != null) {
             PaymentTransaction txn = PaymentTransaction.builder()
                     .invoiceNumber(request.invoiceNumber())
+                    .createdAt(Instant.now())
                     .checkoutRequestId(response.response().checkoutRequestId())
                     .merchantRequestId(response.response().merchantRequestId())
                     .phoneNumber(request.phoneNumber())
