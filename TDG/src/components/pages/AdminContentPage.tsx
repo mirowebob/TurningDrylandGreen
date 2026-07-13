@@ -498,7 +498,7 @@ const AdminContentPage = () => {
                                 <label className="block text-sm text-white/80">
                                     <span className="mb-2 block">Short Description *</span>
                                     <textarea
-                                        value={projectDesc}
+                                        value={shortDesc}
                                         onChange={(e) => setShortDesc(e.target.value)}
                                         rows={4}
                                         className="w-full rounded-xl border border-white/10 bg-[#0e1b14] px-4 py-3 text-white outline-none ring-0 focus:border-amber-400/50 transition-all resize-none"
