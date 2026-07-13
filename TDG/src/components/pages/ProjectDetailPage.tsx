@@ -2,10 +2,8 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
     ArrowLeft,
     ArrowRight,
-    Calendar,
     Heart,
     MapPin,
-    Share2,
     Sparkles,
     Sprout,
     Users,
@@ -185,11 +183,11 @@ const ProjectDetailPage = () => {
                                             {project.title}
                                         </h1>
                                         <div className="flex items-center gap-4 text-sm text-white/40">
-                                            <span className="flex items-center gap-1">
+                                            {/*<span className="flex items-center gap-1">
                                                 <Calendar size={14} />
                                                 {project.startDate ? new Date(project.startDate).getFullYear() : "2024"}
                                             </span>
-                                            <span>•</span>
+                                            <span>•</span>*/}
                                             <span className="flex items-center gap-1">
                                                 <Users size={14} />
                                                 {project.communityName || "Community Project"}

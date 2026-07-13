@@ -4,18 +4,14 @@ import {
     ArrowRight,
     CheckCircle2,
     Heart,
-    Leaf,
     MapPin,
     Quote,
     Sparkles,
-    Sprout,
     Users,
     X,
     Loader2,
     Target,
     TrendingUp,
-    ArrowUpRight,
-    Calendar,
     Filter,
     Star,
 } from "lucide-react";
@@ -95,7 +91,7 @@ const AnimatedNumber = ({ value }: { value: number }) => {
             },
             { threshold: 0.5 }
         );
-        observer.observe(ref.current);
+        observer.observe(node);
         return () => observer.disconnect();
     }, [value]);
 
@@ -158,10 +154,10 @@ const ProjectsPage = () => {
         };
     }, [projects]);
 
-    const heroImage = useMemo(() => {
+    {/*const heroImage = useMemo(() => {
         const projectWithImage = projects.find((p) => p.images?.length > 0);
         return projectWithImage?.images?.[0] || marigat;
-    }, [projects]);
+    }, [projects]);*/}
 
     // Featured projects for the hero section (first 3 or all if less)
     const featuredProjects = useMemo(() => {
