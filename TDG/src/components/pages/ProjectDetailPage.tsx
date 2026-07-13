@@ -258,7 +258,7 @@ const ProjectDetailPage = () => {
                                             Innovation Details
                                         </h2>
                                         <div className="prose prose-invert prose-lg max-w-none text-white/70 space-y-4">
-                                            <p>{project.longDescription || project.description}</p>
+                                            <p>{project.description}</p>
                                             {project.outcome && (
                                                 <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-6 mt-6">
                                                     <h4 className="text-emerald-300 font-semibold mb-2 flex items-center gap-2">
