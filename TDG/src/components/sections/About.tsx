@@ -38,17 +38,8 @@ const About = () => {
         const data = await fetchAdminProfiles();
         if (data && data.length > 0) {
           setAdminProfiles(data);
-        } else {
-          // Fallback to static data if no profiles saved in database yet
-          setAdminProfiles(
-            ABOUT_CONTENT.admins.map((admin) => ({
-              fullName: admin.name,
-              title: admin.position,
-              message: admin.message,
-              profileImageUrl: admin.image,
-            }))
-          );
         }
+
       } catch (err) {
         console.error("Failed to load admin profiles, falling back to static content", err);
         setAdminProfiles(
