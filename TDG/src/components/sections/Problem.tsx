@@ -17,14 +17,14 @@ import figure8 from "../../assets/narok_town.jpg";
 import figure9 from "../../assets/marigat-Loruk.jpeg";
 
 const STATIC_IMAGES = [
-  { src: figure1, alt: "Eroded stream in southern Kajiado",             tag: "Erosion",              caption: "Stream erosion in southern Kajiado is stripping fertile topsoil." },
-  { src: figure2, alt: "Gully erosion in Suswa Narok",                  tag: "Gully Erosion",        caption: "Severe gulley erosion in Suswa Narok threatens grazing land." },
-  { src: figure4, alt: "Water resource management in Kajiado",          tag: "Water Management",     caption: "Geo-data improves water resource management strategies." },
-  { src: figure5, alt: "Dry Ewaso Ng'iro river-bed in Isiolo",          tag: "River Loss",           caption: "The dry Ewaso Ng'iro river-bed shows how water scarcity impacts communities." },
-  { src: figure6, alt: "Tree planting in Elgeyo Marakwet",              tag: "Regeneration",         caption: "Early restoration work in Elgeyo Marakwet demonstrates green recovery potential." },
-  { src: figure7, alt: "Kisiriri dried grazing land",                   tag: "Inadequate Pasture",   caption: "Kisiriri Narok Dried grazing land." },
-  { src: figure8, alt: "Flooded Narok Town",                            tag: "Effects of Erosion",   caption: "Narok Town dilapidated." },
-  { src: figure9, alt: "Marigat Loruk",                                 tag: "Marigat-Loruk Road",   caption: "Marigat-Loruk Road Submerged. Rehabilitating the catchment will significantly improve livelihoods." },
+  { src: figure1, alt: "Eroded stream in southern Kajiado", tag: "Erosion", caption: "Stream erosion in southern Kajiado is stripping fertile topsoil." },
+  { src: figure2, alt: "Gully erosion in Suswa Narok", tag: "Gully Erosion", caption: "Severe gulley erosion in Suswa Narok threatens grazing land." },
+  { src: figure4, alt: "Water resource management in Kajiado", tag: "Water Management", caption: "Geo-data improves water resource management strategies." },
+  { src: figure5, alt: "Dry Ewaso Ng'iro river-bed in Isiolo", tag: "River Loss", caption: "The dry Ewaso Ng'iro river-bed shows how water scarcity impacts communities." },
+  { src: figure6, alt: "Tree planting in Elgeyo Marakwet", tag: "Regeneration", caption: "Early restoration work in Elgeyo Marakwet demonstrates green recovery potential." },
+  { src: figure7, alt: "Kisiriri dried grazing land", tag: "Inadequate Pasture", caption: "Kisiriri Narok Dried grazing land." },
+  { src: figure8, alt: "Flooded Narok Town", tag: "Effects of Erosion", caption: "Narok Town dilapidated." },
+  { src: figure9, alt: "Marigat Loruk", tag: "Marigat-Loruk Road", caption: "Marigat-Loruk Road Submerged. Rehabilitating the catchment will significantly improve livelihoods." },
 ];
 
 // ── Adapts a backend entry into the card props shape ─────────────────────────
@@ -110,7 +110,7 @@ const Problem = () => {
             {/* Source indicator */}
             {loaded && dynamicImages.length > 0 && (
               <p className="mb-4 text-xs text-soil/40 text-right tracking-widest uppercase">
-                {dynamicImages.length} live {dynamicImages.length === 1 ? "entry" : "entries"} from database
+                {dynamicImages.length} live {dynamicImages.length === 1 ? "entry" : "entries"}
               </p>
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center items-start">
