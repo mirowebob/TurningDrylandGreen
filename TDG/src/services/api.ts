@@ -1,7 +1,7 @@
 /**
  * TDG API service — all calls go to the Spring Boot backend at port 6000.
  */
-const BASE_URL = import.meta.env.TDG_API_BASE_URL ?? "http://localhost:8082";
+const BASE_URL = import.meta.env.TDG_API_BASE_URL ?? "https://tdg-backend-0hzq.onrender.com";
 
 import "axios";
 import axios from "axios";
