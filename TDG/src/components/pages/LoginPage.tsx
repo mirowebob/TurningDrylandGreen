@@ -22,7 +22,7 @@ export default function LoginPage() {
         try {
             const response = await loginUser(email, password)
 
-            login(response.data.token);
+            login(response.data.token, response.data.refreshToken);
             navigate('/admin');
         } catch (err) {
             if (axios.isAxiosError(err) && err.response?.status === 401) {

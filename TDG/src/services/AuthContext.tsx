@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState } from "react";
 
 interface AuthContextType {
     token: string | null;
-    login: (token: string) => void;
+    login: (token: string, refreshToken: string) => void;
     logout: () => void;
     isAuthenticated: boolean;
 }
@@ -22,6 +22,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const logout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken')
         setToken(null);
     };
 
