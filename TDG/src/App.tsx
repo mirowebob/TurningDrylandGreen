@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './services/AuthContext';
+import ProtectedRoute from './services/ProtectedRoute';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Hero from './components/sections/Hero';
@@ -11,10 +13,11 @@ import Outcomes from './components/sections/Outcomes';
 import Collaborators from './components/sections/Collaborators';
 import Contact from './components/sections/Contact';
 import ProjectsPage from './components/pages/ProjectsPage';
-import ProjectDetailPage from './components/pages/ProjectDetailPage'; // Import the new component
+import ProjectDetailPage from './components/pages/ProjectDetailPage';
 import AdminDashboardPage from './components/pages/AdminDashboardPage';
 import AdminProblemImagesPage from './components/pages/AdminProblemImagesPage';
 import AdminContentPage from './components/pages/AdminContentPage';
+import LoginPage from './components/pages/LoginPage';
 
 function HomePage() {
   return (
@@ -38,16 +41,41 @@ function HomePage() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/projects" element={<ProjectsPage />} />
-        <Route path="/projects/:id" element={<ProjectDetailPage />} /> {/* New route */}
-        <Route path="/admin" element={<AdminDashboardPage />} />
-        <Route path="/admin/problem-images" element={<AdminProblemImagesPage />} />
-        <Route path="/admin/content" element={<AdminContentPage />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/projects/:id" element={<ProjectDetailPage />} />
+          <Route path="/login" element={<LoginPage />} />
+
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/problem-images"
+            element={
+              <ProtectedRoute>
+                <AdminProblemImagesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/content"
+            element={
+              <ProtectedRoute>
+                <AdminContentPage />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

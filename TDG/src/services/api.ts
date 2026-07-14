@@ -1,7 +1,7 @@
 /**
  * TDG API service — all calls go to the Spring Boot backend at port 6000.
  */
-const BASE_URL = import.meta.env.TDG_API_BASE_URL ?? "https://tdg-backend-0hzq.onrender.co";
+const BASE_URL = import.meta.env.TDG_API_BASE_URL ?? "http://localhost:8082"  //https://tdg-backend-0hzq.onrender.co
 
 import "axios";
 import axios from "axios";
@@ -64,6 +64,44 @@ export interface TransactionStatus {
   receiptNumber?: string;
   resultDescription?: string;
 }
+
+let isRefreshing = false;
+axios.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+
+axios.interceptors.response.use(
+  (res) => res,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry && !isRefreshing) {
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const refreshToken = localStorage.getItem('refreshToken');
+        const { data } = await axios.post('/api/auth/refresh', { refreshToken });
+
+        localStorage.setItem('token', data.token);
+        originalRequest.headers.Authorization = `Bearer ${data.token}`;
+
+        return axios(originalRequest);
+      } catch {
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        window.location.href = '/login';
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 // ─── Problems ─────────────────────────────────────────────────────────────────
 
@@ -338,4 +376,11 @@ export async function fetchProjectById(id: string) {
   const res = await axios.get<ProjectDTO>(`${BASE_URL}/api/projects/${id}`);
   return res.data;
 
+}
+
+export async function loginUser(email: string, password: string) {
+  return await axios.post(`${BASE_URL}/api/auth/login`, {
+    email,
+    password,
+  });
 }
