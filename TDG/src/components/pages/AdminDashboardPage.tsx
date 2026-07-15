@@ -54,7 +54,7 @@ const AdminDashboardPage = () => {
   // Admin profile form state
   const [fullName, setFullName] = useState("");
   const [profileTitle, setProfileTitle] = useState("");
-  const [profileMessage, setProfileMessage] = useState("");
+  const [profileMessage, setProfileMessage] = useState(" add admin message");
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 

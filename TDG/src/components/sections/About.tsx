@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { AdminProfileDTO } from "../../services/api";
+import { fetchAdminProfiles } from "../../services/api";
 
 // Map icon string to actual Lucide component
 const iconMap: Record<string, LucideIcon> = {
@@ -34,11 +35,11 @@ const About = () => {
   useEffect(() => {
     const getProfiles = async () => {
       try {
-        {/*const data = await fetchAdminProfiles();*/ }
+        const data = await fetchAdminProfiles();
 
-        {/*if (data && data.length > 0) {
+        if (data && data.length > 0) {
           setAdminProfiles(data);
-        }*/}
+        }
 
       } catch (err) {
         console.error("Failed to load admin profiles, falling back to static content", err);
