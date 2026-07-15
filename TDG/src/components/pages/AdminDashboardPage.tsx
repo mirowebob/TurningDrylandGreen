@@ -792,37 +792,7 @@ const AdminDashboardPage = () => {
               </div>
 
               {/* Info Card */}
-              <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-emerald-500/5 to-emerald-600/5 p-6 md:p-8">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                    <FileText size={22} className="text-emerald-400" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-white mb-2">Image Optimization</h4>
-                    <p className="text-sm leading-relaxed text-white/50">
-                      All uploaded images are automatically optimized for web delivery through Cloudinary.
-                      They're served in responsive sizes to ensure fast loading times and minimal layout shifts.
-                    </p>
-                    <div className="mt-4 space-y-2">
-                      <div className="flex items-center gap-2 text-xs text-emerald-400">
-                        <CheckCircle2 size={14} />
-                        <span>Automatic compression enabled</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-emerald-400">
-                        <CheckCircle2 size={14} />
-                        <span>Responsive image delivery</span>
-                      </div>
-                    </div>
-                    <Link
-                      to="/admin/problem-images"
-                      className="inline-flex items-center gap-2 mt-4 text-sm text-emerald-400 hover:text-emerald-300 transition-colors"
-                    >
-                      <span>Manage images</span>
-                      <ArrowUpRight size={14} />
-                    </Link>
-                  </div>
-                </div>
-              </div>
+
             </div>
 
           </div>

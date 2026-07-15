@@ -2,6 +2,7 @@
  * TDG API service — all calls go to the Spring Boot backend at port 6000.
  */
 const BASE_URL = import.meta.env.TDG_API_BASE_URL ?? "https://tdg-backend-0hzq.onrender.com"
+//const BASE_URL = "http://localhost:8082"
 
 import "axios";
 import axios from "axios";
@@ -222,6 +223,7 @@ export async function deleteTestimonial(id: number): Promise<void> {
  */
 export async function fetchAdminProfiles(): Promise<AdminProfileDTO[]> {
   const res = await axios.get(`${BASE_URL}/api/profiles`);
+  console.log("fetched admin profiles", res.data);
   return res.data;
 }
 
