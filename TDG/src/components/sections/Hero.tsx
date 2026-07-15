@@ -1,8 +1,39 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 import { HERO_CONTENT } from "../../data/content";
 import tdgLogo from "../../assets/new_logo.jpg";
 
+// Import problem images from assets
+import figure1 from "../../assets/Figure 1- Eroded Stream in Southern Kajiado.jpg";
+import figure2 from "../../assets/suswa erosion.jpg";
+import figure4 from "../../assets/Fig. 4-httpsafrica.wetlands.orgennewsusing-geo-data-to-improve-water-resource-management-in-kajiado-county.png";
+import figure5 from "../../assets/Figure 5-dry Ewaso Ng'iro River-bed in Isiolo.jpg";
+import figure6 from "../../assets/Figure 6-Tot in Elgeyo Marakwet.png";
+import figure7 from "../../assets/kisiriri.jpg";
+import figure8 from "../../assets/narok_town.jpg";
+import figure9 from "../../assets/marigat-Loruk.jpeg";
+
+const PROBLEM_IMAGES = [
+  figure1,
+  figure2,
+  figure4,
+  figure5,
+  figure6,
+  figure7,
+  figure8,
+  figure9,
+];
+
 const Hero = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % PROBLEM_IMAGES.length);
+    }, 6000); // Rotate every 6 seconds
+    return () => clearInterval(timer);
+  }, []);
+
   const handleScrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
@@ -18,8 +49,25 @@ const Hero = () => {
       id="hero"
       className="relative min-h-screen flex items-center justify-center bg-soil overflow-hidden pt-16"
     >
-      {/* Background radial gradient to forest-green at bottom-left */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(45,74,30,0.4)_0%,rgba(26,18,8,0)_60%)] pointer-events-none" />
+      {/* Background Slideshow */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <AnimatePresence initial={false}>
+          <motion.img
+            key={currentIndex}
+            src={PROBLEM_IMAGES[currentIndex]}
+            alt="Dryland degradation problem"
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 0.35, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </AnimatePresence>
+      </div>
+
+      {/* Dark overlay for readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-soil via-soil/60 to-soil/40 pointer-events-none" />
+
 
       {/* Decorative Topographic Lines SVG Overlay */}
       <div className="absolute inset-0 opacity-15 pointer-events-none mix-blend-overlay">

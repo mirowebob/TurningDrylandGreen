@@ -8,7 +8,6 @@ import {
   TrendingUp,
   Users,
   Compass,
-  FileText,
   Activity,
   UserCog,
   PlusCircle,
