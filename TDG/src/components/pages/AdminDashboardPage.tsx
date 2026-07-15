@@ -23,7 +23,8 @@ import {
   LayoutDashboard,
   ArrowLeft,
   Menu,
-  X
+  X,
+  ShieldAlert
 } from "lucide-react";
 import Navbar from "../layout/Navbar";
 import Footer from "../layout/Footer";
@@ -96,6 +97,12 @@ const AdminDashboardPage = () => {
       path: "/admin#admin-profile-form",
       icon: UserCog,
       description: "Manage team members"
+    },
+    {
+      label: "Reset Password",
+      path: "/admin-recovery",
+      icon: ShieldAlert,
+      description: "admin password reset"
     }
   ];
 
@@ -443,7 +450,7 @@ const AdminDashboardPage = () => {
               },
               {
                 label: "Testimonials",
-                value: stats.testimonials,
+                value: stats.testimonials,///admin-recovery
                 icon: Users,
                 color: "from-blue-500/10 to-blue-600/5 border-blue-500/20",
                 iconColor: "text-blue-400",
