@@ -18,6 +18,7 @@ import AdminDashboardPage from './components/pages/AdminDashboardPage';
 import AdminProblemImagesPage from './components/pages/AdminProblemImagesPage';
 import AdminContentPage from './components/pages/AdminContentPage';
 import LoginPage from './components/pages/LoginPage';
+import AdminRecoveryPage from './components/pages/AdminRecoveryPage';
 
 function HomePage() {
   return (
@@ -48,6 +49,7 @@ function App() {
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/projects/:id" element={<ProjectDetailPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/admin-recovery" element={<AdminRecoveryPage />} />
 
           <Route
             path="/admin"

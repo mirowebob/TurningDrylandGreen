@@ -384,3 +384,18 @@ export async function loginUser(email: string, password: string) {
     password,
   });
 }
+
+export async function resetAdminPassword(secret: string, email: string, newPassword: string) {
+  try {
+    const res = await axios.post(`${BASE_URL}/api/auth/reset-password`, {
+      secret, email, newPassword
+    })
+    return res.data
+  } catch (err) {
+    if (axios.isAxiosError(err) && err.response?.data?.error) {
+      return err.response.data.error;
+    } else {
+      return "something went wrong, please try again"
+    }
+  }
+}
